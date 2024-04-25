@@ -25,4 +25,27 @@ public class Piece {
     public static int BlackKing = King | Black; // 14
 
     public static int IndexMax = BlackKing; // = 14
+
+    public static int typeMask = 0b0111;
+    public static int colourMask = 0b1000;
+
+    public static int MkPiece(int type, int colour) { return type | colour; }
+
+    public static int GetType(int piece) { return piece & typeMask; }
+
+    public boolean IsColour(int piece, int colour) {
+        return (piece & colourMask) == colour && piece != 0;
+    }
+
+    public static boolean IsLinearSlider(int piece) {
+        return GetType(piece) == Queen || GetType(piece) == Rook;
+    }
+
+    public static boolean IsDiagonalSlider(int piece) {
+        return GetType(piece) == Bishop || GetType(piece) == Queen;
+    }
+
+    public static boolean IsSlider(int piece) {
+        return IsDiagonalSlider(piece) || IsLinearSlider(piece);
+    }
 }

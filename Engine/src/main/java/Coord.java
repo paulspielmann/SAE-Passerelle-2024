@@ -8,6 +8,6 @@ public class Coord {
     }
 
     public Coord(int square) {
-
+        // TODO
     }
 }
