@@ -3,7 +3,7 @@
 // of this piece-type on the square associated with the bit's index.
 
 // We use the "Least Significant File Mapping" : the e4 square (Rank 3, File 4)
-// is represented like so : Rank * 8 + File = 28
+// is indexed like so : Rank * 8 + File = 28
 // The bitboard is little endian although converting back and from big endian
 // is as simple as XORing the square index with 63
 
@@ -36,4 +36,7 @@ public class BitboardUtil {
 
     public static long LightSquares = 0x55AA55AA55AA55AAL;
     public static long DarkSquares = 0xAA55AA55AA55AA55L;
+
+    // TODO : Functions to update specific bit(s) in bitboard
+    // Problem : can't pass by reference in Java, need to make long wrapper class
 }

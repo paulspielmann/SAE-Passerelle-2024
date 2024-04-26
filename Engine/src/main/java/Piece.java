@@ -48,4 +48,24 @@ public class Piece {
     public static boolean IsSlider(int piece) {
         return IsDiagonalSlider(piece) || IsLinearSlider(piece);
     }
+
+    public static char ToChar(int piece) {
+        switch (piece) {
+        case 1: return 'p';
+        case 2: return 'n';
+        case 3: return 'b';
+        case 4: return 'r';
+        case 5: return 'q';
+        case 6: return 'k';
+
+        case 9: return 'P';
+        case 10: return 'N';
+        case 11: return 'B';
+        case 12: return 'R';
+        case 13: return 'Q';
+        case 14: return 'K';
+
+        default: return ' ';
+        }
+    }
 }

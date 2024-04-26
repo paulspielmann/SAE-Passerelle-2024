@@ -15,6 +15,8 @@ public class Move {
     public final int PromoteRook = 0b0110;
     public final int PromoteQueen = 0b0111;
 
+
+
     // Masks
     public final int SourceMask = 0b0000000000111111;
     public final int DestMask   = 0b0000111111000000;
