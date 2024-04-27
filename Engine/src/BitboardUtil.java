@@ -16,7 +16,7 @@
 //         -9    -8    -7
 // soWe         sout         soEa
 
-public class BitboardUtil {
+public class Bitboard {
     public static long FileA = 0x0101010101010101L;
     public static long FileH = 0x8080808080808080L;
     public static long NotFileA = ~FileA;
@@ -36,7 +36,4 @@ public class BitboardUtil {
 
     public static long LightSquares = 0x55AA55AA55AA55AAL;
     public static long DarkSquares = 0xAA55AA55AA55AA55L;
-
-    // TODO : Functions to update specific bit(s) in bitboard
-    // Problem : can't pass by reference in Java, need to make long wrapper class
 }
