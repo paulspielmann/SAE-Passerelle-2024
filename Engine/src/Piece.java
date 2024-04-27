@@ -32,6 +32,7 @@ public class Piece {
     public static int MkPiece(int type, int colour) { return type | colour; }
 
     public static int GetType(int piece) { return piece & typeMask; }
+    public static int GetColour(int piece) { return piece & colourMask >> 3; }
 
     public boolean IsColour(int piece, int colour) {
         return (piece & colourMask) == colour && piece != 0;
@@ -52,20 +53,38 @@ public class Piece {
     public static char ToChar(int piece) {
         switch (piece) {
         case 1: return 'p';
-        case 2: return 'n';
-        case 3: return 'b';
-        case 4: return 'r';
-        case 5: return 'q';
-        case 6: return 'k';
+        case 2: return 'N';
+        case 3: return 'B';
+        case 4: return 'R';
+        case 5: return 'Q';
+        case 6: return 'K';
 
-        case 9: return 'P';
-        case 10: return 'N';
-        case 11: return 'B';
-        case 12: return 'R';
-        case 13: return 'Q';
-        case 14: return 'K';
-
+        case 9: return 'p';
+        case 10: return 'n';
+        case 11: return 'b';
+        case 12: return 'r';
+        case 13: return 'q';
+        case 14: return 'k';
         default: return ' ';
+        }
+    }
+
+    public static int FromChar(char c) {
+        switch (c) {
+        case 'P': return 1;
+        case 'N': return 2;
+        case 'B': return 3;
+        case 'R': return 4;
+        case 'Q': return 5;
+        case 'K': return 6;
+
+        case 'p': return 9;
+        case 'n': return 10;
+        case 'b': return 11;
+        case 'r': return 12;
+        case 'q': return 13;
+        case 'k': return 14;
+        default : return 0;
         }
     }
 }
