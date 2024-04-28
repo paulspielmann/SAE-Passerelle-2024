@@ -13,6 +13,7 @@ public class Board {
     // for operations where the bitboard is not the easiest/most efficient
     public int[] Square;
 
+    public int CastlingRights;
     public boolean WhiteToMove;
     public int PieceCount;
 
@@ -26,6 +27,9 @@ public class Board {
     public List<Move> moves;
 
     // TODO:
+    // En passant squares
+    // Castling rights
+    // Checks
     // Fifty move counter for repetition rule
     // FEN/PGN/whatever
     // UCI
@@ -46,18 +50,39 @@ public class Board {
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
+
+        CastlingRights = 0b1111;
     }
 
-    public void UpdateBitboards(int piece, int source, int dest) {
-
+    public boolean CanCastleQS(boolean white) {
+        int mask = white ? 2 : 4;
+        return (CastlingRights & mask) != 0;
     }
 
+    public boolean CanCastleKS(boolean white) {
+        int mask = white ? 1 : 4;
+        return (CastlingRights & mask) != 0;
+    }
+
+    // TODO: Check legality of move (out of bounds, check...)
     public void MakeMove(Move move) {
         int source = move.source;
         int dest = move.dest;
         int movedPiece = Square[source];
+        int movedType = Piece.GetType(movedPiece);
         int flag = move.flag;
         int capturedPiece = Square[dest];
+        int capturedType = Piece.GetType(capturedPiece);
+
+        Pieces[movedType].UnsetBit(source);
+        Pieces[movedType].SetBit(dest);
+        Colours[WhiteToMove ? WhiteIndex : BlackIndex].UnsetBit(source);
+        Colours[WhiteToMove ? WhiteIndex : BlackIndex].SetBit(dest);
+
+        if (capturedType != Piece.None) {
+            Pieces[capturedType - 1].UnsetBit(dest);
+            Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
+        }
     }
 
     public void LoadFromFen(String fen) {

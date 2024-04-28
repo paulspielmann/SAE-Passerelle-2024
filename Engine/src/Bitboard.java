@@ -27,6 +27,12 @@ public class Bitboard {
     public void SetBit(int index) { board |= 1L << index; }
     public void UnsetBit(int index) { board &= ~(1L << index); }
     public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
+
+    public int PopLSB() {
+        int i = Long.numberOfTrailingZeros(board);
+        board &= (board - 1);
+        return i; // Return LSB index
+    }
 }
 
 class BitboardUtil {
@@ -50,4 +56,55 @@ class BitboardUtil {
     public static long LightSquares = 0x55AA55AA55AA55AAL;
     public static long DarkSquares = 0xAA55AA55AA55AA55L;
 
+    // Should these return bitboards ? See MoveGenerator.java
+    public static long Shift(Bitboard b, int n) {
+        return (n > 0 ? b.board << n : b.board >> -n);
+    }
+
+    public static long ShiftSouth(Bitboard b) {
+        b.board >>>= 8;
+        return b.board;
+    }
+
+    public static long ShiftNorth(Bitboard b) {
+        b.board <<= 8;
+        return b.board;
+    }
+
+    public static long ShiftEast(Bitboard b) {
+        b.board = (b.board << 1) & BitboardUtil.NotFileA;
+        return b.board;
+    }
+
+    public static long ShiftNoEa(Bitboard b) {
+        b.board = (b.board << 9) & BitboardUtil.NotFileA;
+        return b.board;
+    }
+
+    public static long ShiftSoEa(Bitboard b) {
+        b.board = (b.board >> 7) & BitboardUtil.NotFileA;
+        return b.board;
+    }
+
+    public static long ShiftWest(Bitboard b) {
+        b.board = (b.board >> 1) & BitboardUtil.NotFileH;
+        return b.board;
+    }
+    public static long ShiftSoWe(Bitboard b) {
+        b.board = (b.board >> 9) & BitboardUtil.NotFileH;
+        return b.board;
+    }
+    public static long ShiftNoWe(Bitboard b) {
+        b.board = (b.board << 7) & BitboardUtil.NotFileH;
+        return b.board;
+    }
+
+    public static long PawnAttacks(Bitboard pawns, boolean white) {
+        if (white) {
+            return (BitboardUtil.ShiftNoEa(pawns) | BitboardUtil.ShiftNoWe(pawns));
+        }
+        else {
+            return (BitboardUtil.ShiftSoEa(pawns) | BitboardUtil.ShiftSoWe(pawns));
+        }
+    }
 }
