@@ -26,6 +26,5 @@ public class BoardHelper {
     public static int FileIndex(int square) { return square & 7; }
 
     public static int Index(int file, int rank) { return rank * 8 + file; }
-    public static int Index(Coord coord) { return 0; } // TODO
-
+    public static int Index(Coord c) { return Index(c.file, c.rank); }
 }

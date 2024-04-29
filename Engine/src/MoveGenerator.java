@@ -1,10 +1,12 @@
 import java.util.List;
 
 public class MoveGenerator {
-    public static int maxMoves = 256;
+    // This is the biggest amount of moves possible at any given position
+    public static int maxMoves = 218;
 
     public Board board;
     public List<Move> moves;
+    public boolean generateQuietMoves;
 
     public int index;
     public int ennemyIndex;
@@ -20,9 +22,9 @@ public class MoveGenerator {
 
     public MoveGenerator(Board b) {
         board = b;
-
     }
 
+    // Call this everytime we generate moves from a given position to reset state
     public void init() {
         whiteToMove = board.WhiteToMove;
         index = whiteToMove ? Board.WhiteIndex : Board.BlackIndex;
@@ -35,6 +37,10 @@ public class MoveGenerator {
     }
 
     public void GenerateMoves() {
+        GenerateMoves(true);
+    }
+
+    public void GenerateMoves(boolean quietMoves) {
         init();
 
     }
@@ -63,7 +69,18 @@ public class MoveGenerator {
 
         Bitboard pawns = board.Pieces[p];
 
-        long promotion = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
-        long push = BitboardUtil.Shift(pawns, offset) & empties;
+        long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
+        long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
+
+        Bitboard push = new Bitboard(BitboardUtil.Shift(pawns, offset) & emptySquares);
+        Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
+        Bitboard captures = new Bitboard(BitboardUtil.PawnAttacks(pawns, white) & ennemyPieces);
+
+        if (generateQuietMoves) {
+            while (pushNoPromo.board != 0) {
+                int dest = BitboardUtil.PopLSB(pushNoPromo);
+                int source = dest - offset;
+            }
+        }
     }
 }

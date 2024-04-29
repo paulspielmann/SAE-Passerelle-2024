@@ -4,5 +4,7 @@ public class Main {
 
         b.LoadFromFen(Board.startingFen);
         System.out.println(b.toString());
+
+        System.out.println();
     }
 }

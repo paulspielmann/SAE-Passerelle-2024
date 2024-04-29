@@ -23,16 +23,14 @@ public class Bitboard {
         board = 0x0000000000000000L;
     }
 
+    public Bitboard(long b) {
+        board = b;
+    }
+
     public void ToggleBit(int index) { board ^= 1L << index; }
     public void SetBit(int index) { board |= 1L << index; }
     public void UnsetBit(int index) { board &= ~(1L << index); }
     public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
-
-    public int PopLSB() {
-        int i = Long.numberOfTrailingZeros(board);
-        board &= (board - 1);
-        return i; // Return LSB index
-    }
 }
 
 class BitboardUtil {
@@ -97,6 +95,12 @@ class BitboardUtil {
     public static long ShiftNoWe(Bitboard b) {
         b.board = (b.board << 7) & BitboardUtil.NotFileH;
         return b.board;
+    }
+
+    public static int PopLSB(Bitboard b) {
+        int i = Long.numberOfTrailingZeros(b.board);
+        b.board &= (b.board - 1);
+        return i; // Return LSB index
     }
 
     public static long PawnAttacks(Bitboard pawns, boolean white) {

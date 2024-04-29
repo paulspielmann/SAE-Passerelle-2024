@@ -104,7 +104,7 @@ public class Board {
                     int index = rank * 8 + file;
                     int piece = Piece.FromChar(c);
 
-                    System.out.println("Adding piece " + c + " at index " + index);
+                    //System.out.println("Adding piece " + c + " at index " + index);
                     Square[index] = piece;
                     Pieces[Piece.GetType(piece) - 1].SetBit(index);
                     Colours[Piece.GetColour(piece)].SetBit(index);

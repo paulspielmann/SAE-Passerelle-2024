@@ -8,6 +8,24 @@ public class Coord {
     }
 
     public Coord(int square) {
-        // TODO
+        file = BoardHelper.FileIndex(square);
+        rank = BoardHelper.RankIndex(square);
+    }
+
+    public int Square() { return BoardHelper.Index(this); }
+
+    public boolean isValid() {
+        return rank < 8 && rank >= 0 && file < 8 && file >= 0;
+    }
+
+    public static Coord Add(Coord a, Coord b) {
+        return new Coord(a.file + b.file, a.rank + b.rank);
+    }
+    public static Coord Sub(Coord a, Coord b) {
+        return new Coord(a.file - b.file, a.rank - b.rank);
+    }
+
+    public static Coord Scale(Coord c, int s) {
+        return new Coord(c.file * s, c.rank * s);
     }
 }
