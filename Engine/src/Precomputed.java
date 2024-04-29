@@ -97,7 +97,7 @@ public class Precomputed {
                     pawnAttacks[i][Board.WhiteIndex].SetBit(i + 7);
                 }
                 if (y < 0) {
-                    whiteCaptures.add((byte) (i - 9));
+                    blackCaptures.add((byte) (i - 9));
                     pawnAttacks[i][Board.BlackIndex].SetBit(i - 9);
                 }
             }
@@ -107,7 +107,7 @@ public class Precomputed {
                     pawnAttacks[i][Board.WhiteIndex].SetBit(i + 9);
                 }
                 if (y > 0) {
-                    whiteCaptures.add((byte) (i - 7));
+                    blackCaptures.add((byte) (i - 7));
                     pawnAttacks[i][Board.BlackIndex].SetBit(i - 7);
                 }
             }
