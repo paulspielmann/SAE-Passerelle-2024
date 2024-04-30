@@ -5,20 +5,20 @@ public class Move {
     public short value;
 
     // 4 bit flags
-    public final int None = 0b0000;
-    public final int EnPassant = 0b0001;
-    public final int Castle = 0b0010;
-    public final int PawnDoubleMove = 0b0011;
+    public static final int None = 0b0000;
+    public static final int EnPassant = 0b0001;
+    public static final int Castle = 0b0010;
+    public static final int PawnDoubleMove = 0b0011;
 
-    public final int PromoteKnight = 0b0100;
-    public final int PromoteBishop = 0b0101;
-    public final int PromoteRook = 0b0110;
-    public final int PromoteQueen = 0b0111;
+    public static final int PromoteKnight = 0b0100;
+    public static final int PromoteBishop = 0b0101;
+    public static final int PromoteRook = 0b0110;
+    public static final int PromoteQueen = 0b0111;
 
     // Masks
-    public final int SourceMask = 0b0000000000111111;
-    public final int DestMask   = 0b0000111111000000;
-    public final int FlagMask   = 0b1111000000000000;
+    public static final int SourceMask = 0b0000000000111111;
+    public static final int DestMask   = 0b0000111111000000;
+    public static final int FlagMask   = 0b1111000000000000;
 
     public Move(short val) {
         value = val;

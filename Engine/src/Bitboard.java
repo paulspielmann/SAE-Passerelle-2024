@@ -28,9 +28,12 @@ public class Bitboard {
     }
 
     public void ToggleBit(int index) { board ^= 1L << index; }
+    public void ToggleBits(int a, int b) { board ^= 1L << a | 1L << b; }
     public void SetBit(int index) { board |= 1L << index; }
     public void UnsetBit(int index) { board &= ~(1L << index); }
     public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
+
+    // Implement operators for more readable code throughout
 }
 
 class BitboardUtil {
@@ -111,4 +114,6 @@ class BitboardUtil {
             return (BitboardUtil.ShiftSoEa(pawns) | BitboardUtil.ShiftSoWe(pawns));
         }
     }
+
+
 }
