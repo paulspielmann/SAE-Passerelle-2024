@@ -129,6 +129,7 @@ public class Board {
 
     // TODO: Check legality of move (out of bounds, check...)
     public void MakeMove(Move move) {
+        System.out.println("Making move: " + move.source + move.dest);
         int source = move.source;
         int dest = move.dest;
         int movedPiece = Square[source];
@@ -146,11 +147,14 @@ public class Board {
             Pieces[capturedType - 1].UnsetBit(dest);
             Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
         }
+
+        MovePiece(movedPiece,source, dest);
     }
 
     public void MovePiece(int piece, int source, int dest) {
+        System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
         Pieces[piece].ToggleBits(source, dest);
-        Colours[MoveColour].ToggleBits(source, dest);
+        Colours[MoveColour / 8].ToggleBits(source, dest);
 
         Square[source] = Piece.None;
         Square[dest] = piece;
@@ -178,14 +182,28 @@ public class Board {
         PieceCount = 0;
         AllPieces = new Bitboard(0);
         Pieces = new Bitboard[Piece.IndexMax + 1];
+        Pieces[1] = new Bitboard();
+        Pieces[2] = new Bitboard();
+        Pieces[3] = new Bitboard();
+        Pieces[4] = new Bitboard();
+        Pieces[5] = new Bitboard();
+        Pieces[6] = new Bitboard();
+        Pieces[9] = new Bitboard();
+        Pieces[10] = new Bitboard();
+        Pieces[11] = new Bitboard();
+        Pieces[12] = new Bitboard();
+        Pieces[13] = new Bitboard();
+        Pieces[14] = new Bitboard();
         Colours = new Bitboard[2];
+        Colours[0] = new Bitboard();
+        Colours[1] = new Bitboard();
     }
 
     public void LoadFromFen(String fen) {
         String[] fields = fen.split(" ");
 
         int file = 0;
-        int rank = 7; // FEN position starts with rank 8
+        int rank = 7;
 
         for (char c: fields[0].toCharArray()) {
             if (c == '/') {
@@ -194,7 +212,8 @@ public class Board {
             }
             else {
                 if (Character.isDigit(c)) {
-                    file += (int) c - 48;
+                    // file += (int) c - 48;
+                    file += Character.getNumericValue(c);
                 }
                 else {
                     int index = rank * 8 + file;
@@ -203,7 +222,7 @@ public class Board {
                     //System.out.println("Adding piece " + c + " at index " + index);
                     Square[index] = piece;
                     Pieces[Piece.GetType(piece)].SetBit(index);
-                    Colours[Piece.GetColour(piece)].SetBit(index);
+                    Colours[Piece.GetColour(piece) / 8].SetBit(index);
                     PieceCount++;
                     file++;
                 }
@@ -212,7 +231,7 @@ public class Board {
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
 
-        WhiteToMove = (fields[1] == "w");
+        WhiteToMove = (fields[1].equals("w"));
 
         String castle = fields[2];
         boolean whiteKC = castle.contains("K");
@@ -226,12 +245,26 @@ public class Board {
     }
 
     public String toString() {
-        int i = 0;
         String res = "";
-        for (int p: Square) {
-            res = res + Piece.ToChar(p);
-            i++;
-            if (i % 8 == 0) res += "\n";
+        for (int rank = 7; rank >= 0; rank--) {
+            for (int file = 0; file < 8; file++) {
+                int p = Square[rank * 8 + file];
+                res += Piece.ToChar(p);
+            }
+            res += "\n";
+        }
+        return res;
+   }
+
+    public String toStringSquareIndex() {
+        String res = "";
+        int i;
+        for (int rank = 7; rank >= 0; rank--) {
+            for (int file = 0; file < 8; file++) {
+                i = rank * 8 + file;
+                res += i + (i >= 10 ? " " : "  ");
+            }
+            res += "\n";
         }
         return res;
     }
