@@ -129,7 +129,7 @@ public class Board {
 
     // TODO: Check legality of move (out of bounds, check...)
     public void MakeMove(Move move) {
-        System.out.println("Making move: " + move.source + move.dest);
+        // System.out.println("Making move: " + move.source + move.dest);
         int source = move.source;
         int dest = move.dest;
         int movedPiece = Square[source];
@@ -152,7 +152,7 @@ public class Board {
     }
 
     public void MovePiece(int piece, int source, int dest) {
-        System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
+        //System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
         Pieces[piece].ToggleBits(source, dest);
         Colours[MoveColour / 8].ToggleBits(source, dest);
 
