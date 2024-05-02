@@ -52,7 +52,7 @@ public class Piece {
 
     public static char ToChar(int piece) {
         switch (piece) {
-        case 1: return 'p';
+        case 1: return 'P';
         case 2: return 'N';
         case 3: return 'B';
         case 4: return 'R';

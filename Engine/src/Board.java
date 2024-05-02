@@ -41,6 +41,8 @@ public class Board {
     public Bitboard EnemyOrthoSliders;
     public Bitboard EnemyDiagSliders;
 
+    public Magic magic;
+
     public int plyCount;
     public int fullMoveCount;
     public ArrayList<Move> moves;
@@ -74,6 +76,7 @@ public class Board {
 
         CastlingRights = 0b1111;
         precomputed = new Precomputed();
+        magic = new Magic();
     }
 
     // Is current player in check ?

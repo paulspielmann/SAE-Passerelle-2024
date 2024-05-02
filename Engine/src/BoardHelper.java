@@ -1,24 +1,41 @@
 public class BoardHelper {
-    public String files = "abcdefgh";
-    public String ranks = "12345678";
+    public static String files = "abcdefgh";
+    public static String ranks = "12345678";
 
-    public final int a1 = 0;
-    public final int b1 = 1;
-    public final int c1 = 2;
-    public final int d1 = 3;
-    public final int e1 = 4;
-    public final int f1 = 5;
-    public final int g1 = 6;
-    public final int h1 = 7;
+    public static final int a1 = 0;
+    public static final int b1 = 1;
+    public static final int c1 = 2;
+    public static final int d1 = 3;
+    public static final int e1 = 4;
+    public static final int f1 = 5;
+    public static final int g1 = 6;
+    public static final int h1 = 7;
 
-    public final int a8 = 56;
-    public final int b8 = 57;
-    public final int c8 = 58;
-    public final int d8 = 59;
-    public final int e8 = 60;
-    public final int f8 = 61;
-    public final int g8 = 62;
-    public final int h8 = 63;
+    public static final int a8 = 56;
+    public static final int b8 = 57;
+    public static final int c8 = 58;
+    public static final int d8 = 59;
+    public static final int e8 = 60;
+    public static final int f8 = 61;
+    public static final int g8 = 62;
+    public static final int h8 = 63;
+
+    public static final Coord[] RookDirs =
+    {
+        new Coord(1, 0),
+        new Coord(-1, 0),
+        new Coord(0, 1),
+        new Coord(0, -1),
+    };
+
+    public static final Coord[] BishopDirs =
+    {
+        new Coord(1, 1),
+        new Coord(-1, 1),
+        new Coord(1, -1),
+        new Coord(-1, -1),
+    };
+
 
     // The following functions return respectively, the rank
     // and file indexes (0 to 7) of a square represented as an int

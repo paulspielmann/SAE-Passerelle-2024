@@ -103,7 +103,7 @@ public class MoveGenerator {
     }
 
     public void UpdateSlideAttacks(Bitboard b, boolean ortho) {
-        long blockers = board.
+        long blockers = 0;
     }
 
     public void GenerateSlidingAttacks() {

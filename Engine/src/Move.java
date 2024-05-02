@@ -3,6 +3,9 @@ public class Move {
     // encode a move in a 16 bit short : 6 bits of source and destination
     // squares, with 4 remaining bits for additional info (like a check)
     public short value;
+    public int source;
+    public int dest;
+    public int flag;
 
     // 4 bit flags
     public static final int None = 0b0000;
@@ -22,20 +25,32 @@ public class Move {
 
     public Move(short val) {
         value = val;
+        source = source();
+        dest = dest();
+        flag = flag();
+    }
+
+    public Move(int source, int dest) {
+        this(source, dest, Move.None);
     }
 
     public Move(int source, int dest, int flag) {
         value = (short) (source | dest << 6 | flag << 12);
+        this.source = source;
+        this.dest = dest;
+        this.flag = flag;
     }
 
-    public int source = value & SourceMask;
-    public int dest = value & DestMask;
-    public int flag = value >> 12;
+    public int source() { return value & SourceMask; }
 
-    public boolean IsPromotion = flag >= PromoteKnight;
+    public int dest() { return value & DestMask; }
+
+    public int flag() { return value >> 12; }
+
+    public boolean IsPromotion() { return flag() >= PromoteKnight; }
 
     public int GetPromotionPiece() {
-        switch (flag) {
+        switch (flag()) {
         case PromoteKnight:
             return Piece.Knight;
         case PromoteBishop:
@@ -47,5 +62,13 @@ public class Move {
         default:
             return Piece.None;
         }
+    }
+
+    public String toBinaryString() {
+        String res = "";
+        for (int i = 15; i >= 0; i--) {
+            res += ((value >> i) & 1);
+        }
+        return res;
     }
 }

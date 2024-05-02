@@ -57,7 +57,7 @@ public class Precomputed {
     public Precomputed() {
         whitePawnAttacks = new Byte[64][];
         blackPawnAttacks = new Byte[64][];
-        edgeDistance = new int[8][];
+        edgeDistance = new int[64][8];
         kingMoves = new Byte[64][];
         knightMoves = new Byte[64][];
 
@@ -91,6 +91,8 @@ public class Precomputed {
             ArrayList<Byte> whiteCaptures = new ArrayList<>();
             ArrayList<Byte> blackCaptures = new ArrayList<>();
             pawnAttacks[i] = new Bitboard[2];
+            pawnAttacks[i][0] = new Bitboard();
+            pawnAttacks[i][1] = new Bitboard();
             if (x > 0) {
                 if (y < 7) {
                     whiteCaptures.add((byte) (i + 7));
@@ -137,6 +139,7 @@ public class Precomputed {
                 int offset = dirs[dirIndex];
                 for (int j = 0; j < edgeDistance[i][dirIndex]; j++) {
                     int dest = i + offset * (j + 1);
+                    rookMoves[i] = new Bitboard();
                     rookMoves[i].SetBit(dest);
                 }
              }
@@ -146,6 +149,7 @@ public class Precomputed {
                 int offset = dirs[dirIndex];
                 for (int j = 0; j < edgeDistance[i][dirIndex]; j++) {
                     int dest = i + offset * (j + 1);
+                    bishopMoves[i] = new Bitboard();
                     bishopMoves[i].SetBit(dest);
                 }
              }
@@ -163,6 +167,7 @@ public class Precomputed {
                     int maxMoveDist = Math.max(Math.abs(x - X), Math.abs(y - Y));
                     if (maxMoveDist == 1) {
                         legalMoves.add((byte) square);
+                        kingAttacks[i] = new Bitboard();
                         kingAttacks[i].SetBit(square);
                     }
                 }
@@ -211,6 +216,7 @@ public class Precomputed {
                 for (int i = -8; i < 8; i++) {
                     Coord c = Coord.Add(new Coord(a), Coord.Scale(dir, i));
                     if (c.isValid()) {
+                        alignMask[a][b] = new Bitboard();
                         alignMask[a][b].SetBit(BoardHelper.Index(c));
                     }
                 }
@@ -225,6 +231,7 @@ public class Precomputed {
                 for (int j = 0; j < 8; j++) {
                     Coord c = Coord.Scale(Coord.Add(square, offsetCompass[dirIndex]), j);
                     if (c.isValid()) {
+                        dirRayMask[dirIndex][i] = new Bitboard();
                         dirRayMask[dirIndex][i].SetBit(BoardHelper.Index(c));
                     }
                     else {
