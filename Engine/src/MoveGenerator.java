@@ -85,7 +85,7 @@ public class MoveGenerator {
         long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
         long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
 
-        Bitboard push =new Bitboard(BitboardUtil.Shift(pawns, offset) & emptySquares & checkRayMask);
+        Bitboard push = new Bitboard(BitboardUtil.Shift(pawns, offset) & emptySquares & checkRayMask);
         Bitboard promos = new Bitboard(push.board & promotionMask & checkRayMask);
         Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
 
@@ -103,12 +103,11 @@ public class MoveGenerator {
     }
 
     public void UpdateSlideAttacks(Bitboard b, boolean ortho) {
-        long blockers = board.
+        long blockers = 0;
     }
 
     public void GenerateSlidingAttacks() {
         opponentSlidingAttacks = 0;
-
 
     }
 }
