@@ -1,13 +1,13 @@
 <template>
-    <div id="board">
-      <div class="row" v-for="row in rows" :key="row.id">
-        <div class="square" v-for="square in row.squares" :key="square.id" :class="[square.color]">
+  <div id="board">
+    <div class="row" v-for="row in rows" :key="row.id">
+      <div class="square" v-for="square in row.squares" :key="square.id" :class="[square.color]" @mousedown="startDrag(square)" @mouseup="endDrag(square)" :style="{ cursor: square.image ? 'grab' : 'default' }">
         {{ square.label }}
-        <img v-if="square.image" :src="square.image" alt="Pawn">
-        </div>
+        <img v-if="square.image" :src="square.image" alt="Piece" draggable="false">
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   export default {
@@ -23,10 +23,28 @@
           { id: 6, squares: [{ id: 1, label: '3', color: 'dark' }, { id: 2, color: 'light' }, { id: 3, color: 'dark' }, { id: 4, color: 'light' }, { id: 5, color: 'dark' }, { id: 6, color: 'light' }, { id: 7, color: 'dark' }, { id: 8, color: 'light' }] },
           { id: 7, squares: [{ id: 1, label: '2', color: 'light', image: 'img/white_pawn.svg' }, { id: 2,  color: 'dark', image: 'img/white_pawn.svg'  }, { id: 3, color: 'light', image: 'img/white_pawn.svg'  }, { id: 4, color: 'dark', image: 'img/white_pawn.svg'  }, { id: 5, color: 'light', image: 'img/white_pawn.svg'  }, { id: 6, color: 'dark', image: 'img/white_pawn.svg'  }, { id: 7, color: 'light', image: 'img/white_pawn.svg'  }, { id: 8, color: 'dark', image: 'img/white_pawn.svg'  }] },
           { id: 8, squares: [{ id: 1, label: '1   a', color: 'dark', image: 'img/white_rook.svg' }, { id: 2, label:'b', color: 'light', image: 'img/white_knight.svg' }, { id: 3, label:'c', color: 'dark', image: 'img/white_bishop.svg' }, { id: 4, label:'d', color: 'light', image: 'img/white_queen.svg' }, { id: 5, label:'e', color: 'dark', image: 'img/white_king.svg' }, { id: 6, label:'f', color: 'light', image: 'img/white_bishop.svg' }, { id: 7, label:'g', color: 'dark', image: 'img/white_knight.svg' }, { id: 8, label:'h', color: 'light', image: 'img/white_rook.svg' }] }
-        ]
-      };
+        ],
+        dragStart: null
+    };
+  },
+  methods: {
+    startDrag(square) {
+      if (square.image) {
+        this.dragStart = square;
+      }
+    },
+    endDrag(square) {
+      if (this.dragStart) {
+        if (square.color !== this.dragStart.color) {
+          // Déplacez la pièce seulement si la case de destination est d'une couleur différente
+          square.image = this.dragStart.image;
+          this.dragStart.image = null;
+        }
+        this.dragStart = null;
+      }
     }
-  };
+  }
+};
   </script>
   
   <style scoped>
