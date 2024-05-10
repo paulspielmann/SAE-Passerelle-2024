@@ -1,3 +1,4 @@
+import java.io.Serializable;
 // A bitboard (for a piece type and color) is a 64 bit "long" where each bit
 // represents a square on the board. A one bit implies the existence of a piece
 // of this piece-type on the square associated with the bit's index.
@@ -16,7 +17,7 @@
 //         -9    -8    -7
 // soWe         sout         soEa
 
-public class Bitboard {
+public class Bitboard implements Serializable {
     public long board;
 
     public Bitboard() {
@@ -32,8 +33,12 @@ public class Bitboard {
     public void SetBit(int index) { board |= 1L << index; }
     public void UnsetBit(int index) { board &= ~(1L << index); }
     public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
+    // TODO: Implement operators for more readable code throughout
 
-    // Implement operators for more readable code throughout
+    public String toString() {
+        return Long.toBinaryString(board);
+    }
+
 }
 
 class BitboardUtil {
@@ -59,7 +64,11 @@ class BitboardUtil {
 
     // Should these return bitboards ? See MoveGenerator.java
     public static long Shift(Bitboard b, int n) {
-        return (n > 0 ? b.board << n : b.board >> -n);
+        return (n > 0 ? b.board << n : b.board >>> -n);
+    }
+
+    public static long Shift(long b, int n) {
+        return (n > 0 ? b << n : b >>> -n);
     }
 
     public static long ShiftSouth(Bitboard b) {
@@ -83,16 +92,16 @@ class BitboardUtil {
     }
 
     public static long ShiftSoEa(Bitboard b) {
-        b.board = (b.board >> 7) & BitboardUtil.NotFileA;
+        b.board = (b.board >>> 7) & BitboardUtil.NotFileA;
         return b.board;
     }
 
     public static long ShiftWest(Bitboard b) {
-        b.board = (b.board >> 1) & BitboardUtil.NotFileH;
+        b.board = (b.board >>> 1) & BitboardUtil.NotFileH;
         return b.board;
     }
     public static long ShiftSoWe(Bitboard b) {
-        b.board = (b.board >> 9) & BitboardUtil.NotFileH;
+        b.board = (b.board >>> 9) & BitboardUtil.NotFileH;
         return b.board;
     }
     public static long ShiftNoWe(Bitboard b) {

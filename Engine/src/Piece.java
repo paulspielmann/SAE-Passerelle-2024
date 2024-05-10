@@ -34,7 +34,7 @@ public class Piece {
     public static int GetType(int piece) { return piece & typeMask; }
     public static int GetColour(int piece) { return piece & colourMask >> 3; }
 
-    public boolean IsColour(int piece, int colour) {
+    public static boolean IsColour(int piece, int colour) {
         return (piece & colourMask) == colour && piece != 0;
     }
 

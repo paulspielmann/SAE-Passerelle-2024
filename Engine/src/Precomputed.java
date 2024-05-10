@@ -88,7 +88,7 @@ public class Precomputed {
             edgeDistance[i][7] = Math.min(S, W);
 
             // Pawns
-            ArrayList<Byte> whiteCaptures = new ArrayList<>();
+            var whiteCaptures = new ArrayList<>();
             ArrayList<Byte> blackCaptures = new ArrayList<>();
             pawnAttacks[i] = new Bitboard[2];
             pawnAttacks[i][0] = new Bitboard();

@@ -130,7 +130,6 @@ public class Board {
         return (CastlingRights & mask) != 0;
     }
 
-    // TODO: Check legality of move (out of bounds, check...)
     public void MakeMove(Move move) {
         // System.out.println("Making move: " + move.source + move.dest);
         int source = move.source;
@@ -154,6 +153,7 @@ public class Board {
         MovePiece(movedPiece,source, dest);
     }
 
+    // TODO
     public void MovePiece(int piece, int source, int dest) {
         //System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
         Pieces[piece].ToggleBits(source, dest);
@@ -163,6 +163,7 @@ public class Board {
         Square[dest] = piece;
     }
 
+    // Update nontrivial bitboards
     public void UpdateSliders() {
         int r = Piece.MkPiece(Piece.Rook, MoveColour);
         int b = Piece.MkPiece(Piece.Bishop, MoveColour);
@@ -185,28 +186,18 @@ public class Board {
         PieceCount = 0;
         AllPieces = new Bitboard(0);
         Pieces = new Bitboard[Piece.IndexMax + 1];
-        Pieces[1] = new Bitboard();
-        Pieces[2] = new Bitboard();
-        Pieces[3] = new Bitboard();
-        Pieces[4] = new Bitboard();
-        Pieces[5] = new Bitboard();
-        Pieces[6] = new Bitboard();
-        Pieces[9] = new Bitboard();
-        Pieces[10] = new Bitboard();
-        Pieces[11] = new Bitboard();
-        Pieces[12] = new Bitboard();
-        Pieces[13] = new Bitboard();
-        Pieces[14] = new Bitboard();
+        for (int i = 1; i <= 14; i++) { Pieces[i] = new Bitboard(); }
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
     }
 
+    // Load game state and position from standard FEN string
     public void LoadFromFen(String fen) {
         String[] fields = fen.split(" ");
 
         int file = 0;
-        int rank = 7;
+        int rank = 7; // FEN strings have rank 8 at the leftmost extremity
 
         for (char c: fields[0].toCharArray()) {
             if (c == '/') {

@@ -36,7 +36,6 @@ public class BoardHelper {
         new Coord(-1, -1),
     };
 
-
     // The following functions return respectively, the rank
     // and file indexes (0 to 7) of a square represented as an int
     public static int RankIndex(int square) { return square >> 3; }

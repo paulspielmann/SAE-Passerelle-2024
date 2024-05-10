@@ -1,3 +1,5 @@
+// Coord Struct which can represent both an actual valid coord on the board
+// as well as a direction offset (for sliding pieces)
 public class Coord {
     public int file;
     public int rank;
