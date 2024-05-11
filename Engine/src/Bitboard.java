@@ -18,7 +18,7 @@ import java.io.Serializable;
 // soWe         sout         soEa
 
 public class Bitboard implements Serializable {
-    public long board;
+    public Long board;
 
     public Bitboard() {
         board = 0x0000000000000000L;
@@ -33,12 +33,10 @@ public class Bitboard implements Serializable {
     public void SetBit(int index) { board |= 1L << index; }
     public void UnsetBit(int index) { board &= ~(1L << index); }
     public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
-    // TODO: Implement operators for more readable code throughout
 
     public String toString() {
-        return Long.toBinaryString(board);
+        return BitboardUtil.toFormattedString(board);
     }
-
 }
 
 class BitboardUtil {
@@ -124,5 +122,17 @@ class BitboardUtil {
         }
     }
 
-
+    public static String toFormattedString(long bb) {
+        StringBuilder sb = new StringBuilder();
+        for (int rank = 7; rank >= 0; rank--) {
+            for (int file = 0; file < 8; file++) {
+                int sq = rank * 8 + file;
+                long mask = 1L << sq;
+                char b = (bb & mask) != 0 ? '1' : '0';
+                sb.append(b).append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }

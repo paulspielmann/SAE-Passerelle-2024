@@ -2,7 +2,7 @@ public class Main {
     public static void main(String[] args) {
         Board b = new Board();
         b.Init();
-        // b.LoadFromFen(Board.startingFen);
+        b.LoadFromFen(Board.startingFen);
 
         // System.out.println(b.toString());
 

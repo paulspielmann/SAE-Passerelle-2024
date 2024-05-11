@@ -30,4 +30,14 @@ public class Coord {
     public static Coord Scale(Coord c, int s) {
         return new Coord(c.file * s, c.rank * s);
     }
+
+    public String toString() {
+        if (isValid()) {
+            return "File: " + BoardHelper.FileLetterFromIndex(file) + ";Rank: " + rank;
+        }
+        else {
+            return "Coord used as a direction offset, x: " + rank + "y: " + file;
+        }
+
+    }
 }
