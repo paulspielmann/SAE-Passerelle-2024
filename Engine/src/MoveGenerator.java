@@ -171,7 +171,7 @@ public class MoveGenerator {
         }
 
         while (capturePromosA.board != 0) {
-            int dest = BitboardUtil.PopLSB(capturesPromosA);
+            int dest = BitboardUtil.PopLSB(capturePromosA);
             int source = dest - dir * 7;
 
             if (!IsPinned(source) ||
