@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Stack;
 
 // Represents current state of the board
 // This includes stuff like side to move, en passant, castling rights, and so on
@@ -20,7 +21,9 @@ public class Board {
     public int FriendlyIndex = WhiteToMove ? WhiteIndex : BlackIndex;
     public int OpponentIndex = 1 - FriendlyIndex;
     public int PieceCount;
+    public int PieceCountNoPawnsNoKings;
     public int CastlingRights;
+    public GameState CurrentGameState;
 
     boolean cachedCheckValue;
     boolean hasCachedCheckValue;
@@ -43,23 +46,20 @@ public class Board {
 
     public Magic magic;
 
-    public int plyCount;
-    public int fullMoveCount;
+    public int PlyCount;
+    public int FullMoveCount;
     public ArrayList<Move> moves;
-
+    public Stack<GameState> gsHistory;
 
     // TODO:
-    // En passant squares
-    // Castling rights
-    // Checks
     // Fifty move counter for repetition rule
-    // FEN/PGN/whatever
+    // FEN/PGN/whatever -> FEN DONE
     // UCI
-    // https://www.chessprogramming.org/Zobrist_Hashing
+    // Zobrist's hash https://www.chessprogramming.org/Zobrist_Hashing
 
     public Board() {
-        plyCount = 0;
-        fullMoveCount = 1; // This always starts at 1
+        PlyCount = 0;
+        FullMoveCount = 1; // This always starts at 1
         Square = new int[64];
         KingSquareIndex = new int[2];
 
@@ -75,6 +75,7 @@ public class Board {
         Colours[1] = new Bitboard();
 
         CastlingRights = 0b1111;
+
         precomputed = new Precomputed();
         magic = new Magic();
     }
@@ -120,40 +121,128 @@ public class Board {
         return false;
     }
 
-    public boolean CanCastleQS(boolean white) {
-        int mask = white ? 1 : 3;
-        return (CastlingRights & mask) != 0;
-    }
+    public void MakeMove(Move move) { MakeMove(move, true); }
 
-    public boolean CanCastleKS(boolean white) {
-        int mask = white ? 0 : 2;
-        return (CastlingRights & mask) != 0;
-    }
-
-    public void MakeMove(Move move) {
-        // System.out.println("Making move: " + move.source + move.dest);
+    public void MakeMove(Move move, boolean record) {
         int source = move.source;
         int dest = move.dest;
+        int flag = move.flag;
+
         int movedPiece = Square[source];
         int movedType = Piece.GetType(movedPiece);
-        int flag = move.flag;
+
         int capturedPiece = Square[dest];
         int capturedType = Piece.GetType(capturedPiece);
+
+        boolean isPromotion = move.IsPromotion();
+        boolean isEnPassant = move.IsEnPassant();
+
+        int newCastlingRights = CurrentGameState.castlingRights;
+        int prevEpFile = CurrentGameState.epFile;
+        int new_epFile = CurrentGameState.epFile;
+        long newZobristKey = CurrentGameState.zobristKey;
 
         Pieces[movedType].UnsetBit(source);
         Pieces[movedType].SetBit(dest);
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].UnsetBit(source);
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].SetBit(dest);
 
+        MovePiece(movedPiece,source, dest);
+
         if (capturedType != Piece.None) {
+            int captureSquare = dest;
+
+            if (isEnPassant) {
+                // If en passant, the captured pawn is one rank above
+                // the destination square
+                captureSquare = dest + (WhiteToMove ? -8 : 8);
+                Square[captureSquare] = Piece.None;
+            }
+
+            if (capturedType != Piece.Pawn) {
+                PieceCountNoPawnsNoKings--;
+            }
+
+            // Remove captured piece from bitboards
             Pieces[capturedType - 1].UnsetBit(dest);
             Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
+            newZobristKey ^= Zobrist.pieces[capturedPiece][captureSquare];
         }
 
-        MovePiece(movedPiece,source, dest);
+        if (movedType == Piece.King) {
+            KingSquareIndex[MoveColour] = dest;
+            // Mask out side to move's castling rights
+            newCastlingRights &= WhiteToMove ? 0b1100 : 0b0011;
+
+            if (flag == Move.Castle) {
+                int rookP = Piece.MkPiece(Piece.Rook, MoveColour);
+                boolean kingside = dest == BoardHelper.g1 || dest == BoardHelper.g8;
+                int rookFrom = kingside ? dest + 1 : dest - 2;
+                int rookTo = kingside ? dest - 1 : dest + 2;
+
+                Pieces[rookP].ToggleBits(rookFrom, rookTo);
+                Colours[FriendlyIndex].ToggleBits(rookFrom, rookTo);
+                Square[rookFrom] = Piece.None;
+                Square[rookTo] = Piece.Rook | MoveColour;
+
+                newZobristKey ^= Zobrist.pieces[rookP][rookFrom];
+                newZobristKey ^= Zobrist.pieces[rookP][rookTo];
+            }
+        }
+
+        if (isPromotion) {
+            PieceCountNoPawnsNoKings++;
+            int promotionType = move.GetPromotionPiece();
+            int promotionPiece = Piece.MkPiece(promotionType, MoveColour);
+
+            Pieces[movedPiece].ToggleBit(dest);
+            Pieces[promotionPiece].ToggleBit(dest);
+            Square[dest] = promotionPiece;
+        }
+
+        if (flag == Move.PawnDoubleMove) {
+            int file = BoardHelper.FileIndex(source) + 1;
+            new_epFile = file;
+            newZobristKey ^= Zobrist.epFile[file];
+        }
+
+        // Any piece moving to or from a rook's square remove that colour's
+        // castling rights on this side
+        if (CurrentGameState.castlingRights != 0) {
+            if (dest == BoardHelper.h1 || source == BoardHelper.h1) {
+                newCastlingRights &= GameState.ClearWhiteKingsideMask;
+            }
+            if (dest == BoardHelper.a1 || source == BoardHelper.a1) {
+                newCastlingRights &= GameState.ClearWhiteQueensideMask;
+            }
+            if (dest == BoardHelper.h8 || source == BoardHelper.h8) {
+                newCastlingRights &= GameState.ClearBlackKingsideMask;
+            }
+            if (dest == BoardHelper.a8 || source == BoardHelper.a8) {
+                newCastlingRights &= GameState.ClearBlackQueensideMask;
+            }
+        }
+
+        // Handle zobrist hash stuff
+        newZobristKey ^= Zobrist.sideToMove;
+        newZobristKey ^= Zobrist.pieces[movedPiece][source];
+        newZobristKey ^= Zobrist.pieces[Square[dest]][dest];
+        newZobristKey ^= Zobrist.epFile[prevEpFile];
+
+
+        WhiteToMove = !WhiteToMove;
+        PlyCount++;
+        int newFiftyMoveCount = CurrentGameState.fiftyMoveCount + 1;
+        GameState newState = new GameState(capturedType,
+                                           new_epFile,
+                                           newCastlingRights,
+                                           newFiftyMoveCount,
+                                           newZobristKey);
+        gsHistory.push(newState);
+        CurrentGameState = newState;
+        hasCachedCheckValue = false;
     }
 
-    // TODO
     public void MovePiece(int piece, int source, int dest) {
         //System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
         Pieces[piece].ToggleBits(source, dest);
@@ -182,14 +271,26 @@ public class Board {
 
     public void Init() {
         moves = new ArrayList<Move>();
-        plyCount = 0;
+        CurrentGameState = new GameState(Piece.None, 0, 0b1111, 0, 0);
+        gsHistory = new Stack<GameState>();
+        PlyCount = 0;
         PieceCount = 0;
+        PieceCountNoPawnsNoKings = 0;
         AllPieces = new Bitboard(0);
         Pieces = new Bitboard[Piece.IndexMax + 1];
         for (int i = 1; i <= 14; i++) { Pieces[i] = new Bitboard(); }
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
+        EnemyDiagSliders = new Bitboard();
+        EnemyOrthoSliders = new Bitboard();
+        FriendlyDiagSliders = new Bitboard();
+        FriendlyOrthoSliders = new Bitboard();
+        UpdateSliders();
+    }
+
+    public void LoadStartPos() {
+        LoadFromFen(startingFen);
     }
 
     // Load game state and position from standard FEN string
@@ -235,7 +336,7 @@ public class Board {
         CastlingRights = (whiteKC ? 1 << 0 : 0) | (whiteQC ? 1 << 1 : 0)
             | (blackKC ? 1 << 2 : 0) | (blackQC ? 1 << 3 : 0);
 
-        fullMoveCount = Integer.parseInt(fields[5]);
+        FullMoveCount = Integer.parseInt(fields[5]);
     }
 
     public String toString() {

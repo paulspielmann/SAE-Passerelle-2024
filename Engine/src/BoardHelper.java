@@ -36,9 +36,11 @@ public class BoardHelper {
         new Coord(-1, -1),
     };
 
+    // Standard notation and not 0-indexed
+    public static int RealRankIndex(int square) { return RankIndex(square) + 1; }
     // The following functions return respectively, the rank
     // and file indexes (0 to 7) of a square represented as an int
-    public static int RankIndex(int square) { return square >> 3; }
+    public static int RankIndex(int square) { return square >>> 3; }
     public static int FileIndex(int square) { return square & 7; }
 
     public static int Index(int file, int rank) { return rank * 8 + file; }

@@ -160,14 +160,14 @@ public class Precomputed {
             ArrayList<Byte> legalMoves = new ArrayList<>();
             for (int delta: dirs) {
                 int square = i + delta;
-                if (square >= 0 && square > 64) {
+                if (square >= 0 && square < 64) {
                     int Y = square / 8;
                     int X = square - y * 8;
 
                     int maxMoveDist = Math.max(Math.abs(x - X), Math.abs(y - Y));
                     if (maxMoveDist == 1) {
-                        legalMoves.add((byte) square);
                         kingAttacks[i] = new Bitboard();
+                        legalMoves.add((byte) square);
                         kingAttacks[i].SetBit(square);
                     }
                 }

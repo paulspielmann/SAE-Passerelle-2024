@@ -4,7 +4,18 @@ public class Main {
         b.Init();
         b.LoadFromFen(Board.startingFen);
 
-        // System.out.println(b.toString());
+        System.out.println(b.toString());
+
+        MoveGenerator mg = new MoveGenerator(b);
+        mg.init();
+        mg.GenerateMoves();
+
+        // Move mv = new Move(12, 28);
+        // System.out.println(mv.toString());
+
+        for (Move m: mg.moves) {
+            System.out.println(m.toString());
+        }
 
         // int e2 = BoardHelper.Index(4, 1);
         // int e4 = BoardHelper.Index(4, 3);

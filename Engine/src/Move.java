@@ -1,7 +1,7 @@
 public class Move {
     // A square index (0 to 63) can fit in just 6 bits. This allows us to
     // encode a move in a 16 bit short : 6 bits of source and destination
-    // squares, with 4 remaining bits for additional info (like a check)
+    // squares, with 4 remaining bits for additional info (promo, en passant..)
     public short value;
     public int source;
     public int dest;
@@ -48,6 +48,8 @@ public class Move {
     public int flag() { return value >> 12; }
 
     public boolean IsPromotion() { return flag() >= PromoteKnight; }
+
+    public boolean IsEnPassant() { return flag() == 1; }
 
     public int GetPromotionPiece() {
         switch (flag()) {

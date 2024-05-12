@@ -26,6 +26,12 @@ public class Piece {
 
     public static int IndexMax = BlackKing; // = 14
 
+    public static int[] PieceIndices =
+    {
+        WhitePawn, WhiteKnight, WhiteBishop, WhiteRook, WhiteQueen, WhiteKing,
+        BlackPawn, BlackKnight, BlackBishop, BlackRook, BlackQueen, BlackKing
+    };
+
     public static int typeMask = 0b0111;
     public static int colourMask = 0b1000;
 

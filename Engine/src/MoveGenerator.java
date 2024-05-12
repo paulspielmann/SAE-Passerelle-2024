@@ -55,29 +55,108 @@ public class MoveGenerator {
         moves = new ArrayList<Move>();
     }
 
-    public void GenerateMoves() {
-        GenerateMoves(true);
+    public int GenerateMoves() {
+        return GenerateMoves(true);
     }
 
-    public void GenerateMoves(boolean quietMoves) {
+    public int GenerateMoves(boolean quietMoves) {
         init();
         generateQuietMoves = quietMoves;
+        moveTypeMask = quietMoves ? -1L : enemyPieces;
         CalculateAttackData();
-        GeneratePawnMoves(whiteToMove);
+
+        GenerateKingMoves();
+
+        if (!inDoubleCheck) {
+            GeneratePawnMoves(whiteToMove);
+            GenerateKnightMoves();
+            GenerateSliders();
+        }
+
+        return moves.size();
     }
 
     public void GenerateKingMoves() {
+        // Limit movement to empty, not attacked squares
+        long legalMask = ~(opponentAttackMap | friendlyPieces);
+        Bitboard kingMoves = Precomputed.kingAttacks[friendlyKingSquare];
 
+        while (kingMoves.board != 0) {
+            int dest = BitboardUtil.PopLSB(kingMoves);
+            moves.add(new Move(friendlyKingSquare, dest));
+        }
+
+        // Castling
+        if (!inCheck && generateQuietMoves) {
+            long blockers = opponentAttackMap | board.AllPieces.board;
+
+            // Kingside
+            if (board.CurrentGameState.CanCastleKS(whiteToMove)) {
+                long castleMask = whiteToMove ?
+                        BitboardUtil.WhiteKingSideMask : BitboardUtil.BlackKingSideMask;
+                if ((castleMask & blockers) == 0) {
+                    int dest = whiteToMove ? BoardHelper.g1 : BoardHelper.g8;
+                    moves.add(new Move(friendlyKingSquare, dest, Move.Castle));
+                }
+            }
+
+            // Queenside
+            if (board.CurrentGameState.CanCastleQS(whiteToMove)) {
+                long castleMask = whiteToMove ?
+                        BitboardUtil.WhiteQueenSideMask : BitboardUtil.BlackQueenSideMask;
+                if ((castleMask & blockers) == 0) {
+                    int dest = whiteToMove ? BoardHelper.c1 : BoardHelper.c8;
+                    moves.add(new Move(friendlyKingSquare, dest, Move.Castle));
+                }
+            }
+        }
     }
 
-    public void GenerateLinearSliders() {
+    public void GenerateSliders() {
+        // This mask will limit movement to squares which are empty/enemy
+        // and if in check, along the ray of the check
+        long moveMask = emptySquares | enemyPieces;
+        moveMask &= checkRayMask & moveTypeMask;
 
+        Bitboard orthos = board.FriendlyOrthoSliders;
+        Bitboard diags = board.FriendlyDiagSliders;
+
+        if (inCheck) {
+            orthos.board &= ~pinRays;
+            diags.board &= ~pinRays;
+        }
+
+        while (orthos.board != 0) {
+            int source = BitboardUtil.PopLSB(orthos);
+            Bitboard moveSquares = Magic.GetRookAttacks(source, allPieces);
+            moveSquares.board &= moveMask;
+
+            // If piece is pinned it may only move along the pinray
+            if (IsPinned(source)) {
+                moveSquares.board &= Precomputed.alignMask[source][friendlyKingSquare].board;
+            }
+
+            while (moveSquares.board != 0) {
+                int dest = BitboardUtil.PopLSB(moveSquares);
+                moves.add(new Move(source, dest));
+            }
+        }
+
+        while (diags.board != 0) {
+            int source = BitboardUtil.PopLSB(diags);
+            Bitboard moveSquares = Magic.GetBishopAttacks(source, allPieces);
+            moveSquares.board &= moveMask;
+
+            if (IsPinned(source)) { // Same logic as before
+                moveSquares.board &= Precomputed.alignMask[source][friendlyKingSquare].board;
+            }
+
+            while (moveSquares.board != 0) {
+                int dest = BitboardUtil.PopLSB(moveSquares);
+                moves.add(new Move(source, dest));
+            }
+        }
     }
-
-    public void GenerateDiagonalSliders() {
-
-    }
-
     public void GenerateKnightMoves() {
         int fKnight = Piece.MkPiece(Piece.Knight, whiteToMove ? Piece.White : Piece.Black);
         Bitboard knights = new Bitboard(board.Pieces[fKnight].board & notPinRays);
