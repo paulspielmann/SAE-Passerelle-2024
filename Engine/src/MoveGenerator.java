@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public class MoveGenerator {
     // This is the biggest amount of moves possible at any given position
@@ -6,7 +6,7 @@ public class MoveGenerator {
 
     Precomputed precomputedMoveData;
     public Board board;
-    public List<Move> moves;
+    public ArrayList<Move> moves;
     public boolean generateQuietMoves;
 
     public int index;
@@ -16,8 +16,10 @@ public class MoveGenerator {
     public boolean inCheck;
     public boolean inDoubleCheck;
 
+    // checkRayMask -> bitboard where 1s are squares where a piece
+    // aims at the friendly king. When not in check it's set to all 1's
     public long checkRayMask;
-    public long pinRays;
+    public long pinRays; // Rays where a slider piece pins
     public long notPinRays;
     public long opponentAttackMap;
     public long opponentAttackMapNoPawns;
@@ -49,6 +51,8 @@ public class MoveGenerator {
         friendlyPieces = board.Colours[index].board;
         allPieces = enemyPieces | friendlyPieces;
         emptySquares = ~allPieces;
+
+        moves = new ArrayList<Move>();
     }
 
     public void GenerateMoves() {
@@ -57,7 +61,9 @@ public class MoveGenerator {
 
     public void GenerateMoves(boolean quietMoves) {
         init();
-
+        generateQuietMoves = quietMoves;
+        CalculateAttackData();
+        GeneratePawnMoves(whiteToMove);
     }
 
     public void GenerateKingMoves() {
@@ -73,7 +79,21 @@ public class MoveGenerator {
     }
 
     public void GenerateKnightMoves() {
+        int fKnight = Piece.MkPiece(Piece.Knight, whiteToMove ? Piece.White : Piece.Black);
+        Bitboard knights = new Bitboard(board.Pieces[fKnight].board & notPinRays);
+        long moveMask = (emptySquares | enemyPieces) & checkRayMask & moveTypeMask;
 
+        while (knights.board != 0) {
+            int knightSquare = BitboardUtil.PopLSB(knights);
+            Bitboard movePoss = new Bitboard(
+                             Precomputed.knightAttacks[knightSquare].board
+                             & moveMask);
+
+            while (movePoss.board != 0) {
+                int dest = BitboardUtil.PopLSB(movePoss);
+                moves.add(new Move(knightSquare, dest));
+            }
+        }
     }
 
     public void GeneratePawnMoves(boolean white) {
@@ -108,6 +128,14 @@ public class MoveGenerator {
         capturesA.board &= checkRayMask & ~promotionMask;
         capturesB.board &= checkRayMask & ~promotionMask;
 
+        // System.out.println("GenPawnMoves debug:");
+        // System.out.println("pawns:\n" + pawns.toString());
+        // System.out.println("Empty Squares:\n" +
+        //                    BitboardUtil.toFormattedString(emptySquares));
+        // System.out.println("CheckRayMask:\n" +
+        //                    BitboardUtil.toFormattedString(checkRayMask));
+        // System.out.println("push:\n" + push.toString());
+
         if (generateQuietMoves) {
 
             // Single pushes
@@ -118,6 +146,10 @@ public class MoveGenerator {
                 if (!IsPinned(source) ||
                 Precomputed.alignMask[source][friendlyKingSquare] ==
                 Precomputed.alignMask[dest][friendlyKingSquare]) {
+                    // System.out.println("Align mask [source, fKing]: ");
+                    // System.out.println(Precomputed.alignMask[source][friendlyKingSquare]);
+                    // System.out.println("Align mask [dest, fKing]: ");
+                    // System.out.println(Precomputed.alignMask[dest][friendlyKingSquare]);
                     moves.add(new Move(source, dest));
                 }
             }
@@ -195,7 +227,7 @@ public class MoveGenerator {
         // TODO: EN PASSANT XDDDD
     }
 
-    public void GeneratePromotions(int source, int dest, List<Move> moves) {
+    public void GeneratePromotions(int source, int dest, ArrayList<Move> moves) {
         moves.add(new Move(source, dest, Move.PromoteQueen));
         moves.add(new Move(source, dest, Move.PromoteKnight));
     }
@@ -246,7 +278,7 @@ public class MoveGenerator {
             boolean diag = dir > 3;
             Bitboard slider = diag ? board.EnemyDiagSliders : board.EnemyOrthoSliders;
 
-            if ((Precomputed.dirRayMask[dir][friendlyKingSquare].board) == 0) {
+            if ((Precomputed.dirRayMask[dir][friendlyKingSquare].board & slider.board) == 0) {
                 continue;
             }
 
@@ -293,7 +325,7 @@ public class MoveGenerator {
                         }
                         else {
                             // Enemy piece can't move in current dir
-                            // thus its blocking checks/pins
+                            // thus it's blocking checks/pins
                             break;
                         }
                     }
@@ -341,7 +373,8 @@ public class MoveGenerator {
 
         opponentAttackMap = opponentAttackMap | opponentPawnAttacks;
         if (!inCheck) {
-            checkRayMask = Long.MAX_VALUE;
+            // This should be maximum long value as the MSB is sign bit
+            checkRayMask = -1L;//Long.MAX_VALUE;
         }
     }
 }

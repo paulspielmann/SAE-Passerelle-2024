@@ -71,4 +71,23 @@ public class Move {
         }
         return res;
     }
+
+    public String toPrettyString() {
+        String res = "";
+        res += BoardHelper.FileLetterFromIndex(source);
+        res += BoardHelper.RealRankIndex(source);
+        res += "->";
+        res += BoardHelper.FileLetterFromIndex(dest);
+        res += BoardHelper.RealRankIndex(dest);
+        return res;
+    }
+
+    public String toString() {
+        String res = "";
+        res += BoardHelper.FileLetterFromIndex(source);
+        res += BoardHelper.RealRankIndex(source);
+        res += BoardHelper.FileLetterFromIndex(dest);
+        res += BoardHelper.RealRankIndex(dest);
+        return res;
+    }
 }
