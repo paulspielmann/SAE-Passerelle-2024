@@ -46,6 +46,10 @@ public class BoardHelper {
     public static int Index(int file, int rank) { return rank * 8 + file; }
     public static int Index(Coord c) { return Index(c.file, c.rank); }
 
+    public static String SquareString(int index) {
+        return "" + FileLetterFromIndex(index) + RealRankIndex(index);
+    }
+
     public static char FileLetterFromIndex(int index) {
         switch (index % 8) {
         case 0:

@@ -1,33 +1,14 @@
+import java.util.ArrayList;
+
 public class Main {
+    public static String TestFen1 = "7k/3n1b2/8/3R3P/8/3BB3/2K5/N6r w - - 0 1";
+
+    public static int[] StartPosDepth6 = { 1, 20, 400, 8902, 197281, 4865609 };
+
     public static void main(String[] args) {
         Board b = new Board();
         b.Init();
         b.LoadFromFen(Board.startingFen);
-
-        System.out.println(b.toString());
-
-        MoveGenerator mg = new MoveGenerator(b);
-        mg.init();
-        mg.GenerateMoves();
-
-        // Move mv = new Move(12, 28);
-        // System.out.println(mv.toString());
-
-        for (Move m: mg.moves) {
-            System.out.println(m.toString());
-        }
-
-        // int e2 = BoardHelper.Index(4, 1);
-        // int e4 = BoardHelper.Index(4, 3);
-        // int e7 = BoardHelper.Index(4, 6);
-        // int e5 = BoardHelper.Index(4, 4);
-
-        // Move e2e4 = new Move(e2, e4);
-        // Move e7e5 = new Move(e7, e5);
-
-        // b.MakeMove(e2e4); System.out.println(b.toString());
-        // b.MakeMove(e7e5); System.out.println(b.toString());
-
-        // System.out.println(b.toStringSquareIndex());
+        Perft.PerftDivide(b, 5);
     }
 }

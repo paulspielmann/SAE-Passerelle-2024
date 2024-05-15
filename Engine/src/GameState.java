@@ -10,6 +10,14 @@ public class GameState {
     public static int ClearBlackKingsideMask = 0b1011;
     public static int ClearBlackQueensideMask = 0b0111;
 
+    public GameState() {
+        capturedPieceType = Piece.None;
+        epFile = 0;
+        castlingRights = 0b1111;
+        fiftyMoveCount = 0;
+        zobristKey = 0;
+    }
+
     public GameState(int p, int e, int c, int f, long z) {
         capturedPieceType = p;
         epFile = e;

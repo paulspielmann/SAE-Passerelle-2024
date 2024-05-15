@@ -38,7 +38,7 @@ public class Piece {
     public static int MkPiece(int type, int colour) { return type | colour; }
 
     public static int GetType(int piece) { return piece & typeMask; }
-    public static int GetColour(int piece) { return piece & colourMask >> 3; }
+    public static int GetColour(int piece) { return piece & colourMask; }
 
     public static boolean IsColour(int piece, int colour) {
         return (piece & colourMask) == colour && piece != 0;
@@ -71,7 +71,7 @@ public class Piece {
         case 12: return 'r';
         case 13: return 'q';
         case 14: return 'k';
-        default: return ' ';
+        default: return '.';
         }
     }
 

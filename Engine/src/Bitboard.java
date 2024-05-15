@@ -28,14 +28,32 @@ public class Bitboard implements Serializable {
         board = b;
     }
 
-    public void ToggleBit(int index) { board ^= 1L << index; }
-    public void ToggleBits(int a, int b) { board ^= 1L << a | 1L << b; }
-    public void SetBit(int index) { board |= 1L << index; }
-    public void UnsetBit(int index) { board &= ~(1L << index); }
-    public boolean Contains(int index) { return ((board >> index) & 1) != 0; }
+    public void ToggleBit(int index) {
+        board ^= 1L << index;
+    }
+
+    public void ToggleBits(int a, int b) {
+        board ^= (1L << a | 1L << b);
+    }
+
+    public void SetBit(int index) {
+        board |= (1L << index);
+    }
+
+    public void UnsetBit(int index) {
+        board &= ~(1L << index);
+    }
+
+    public boolean Contains(int index) {
+        return ((board >>> index) & 1) != 0;
+    }
 
     public String toString() {
         return BitboardUtil.toFormattedString(board);
+    }
+
+    public String toHString(int hsq) {
+        return BitboardUtil.toHString(board, hsq);
     }
 }
 
@@ -141,5 +159,36 @@ class BitboardUtil {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    public static String toHString(long bb, int hsq) {
+        StringBuilder sb = new StringBuilder();
+        for (int rank = 7; rank >= 0; rank--) {
+            for (int file = 0; file < 8; file++) {
+                int sq = rank * 8 + file;
+                long mask = 1L << sq;
+                char b = (bb & mask) != 0 ? '1' : '.';
+                if (sq == hsq) {
+                    sb.append("X ");
+                }
+                else {
+                    sb.append(b).append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static void print2(Bitboard a, Bitboard b, int hsq) {
+        String[] patternLines = a.toHString(hsq).split("\n");
+        String[] legalMovesLines = b.toHString(hsq).split("\n");
+
+        System.out.println(" First Bitboard         Second Bitboard");
+        System.out.println("---------------         ----------------");
+
+        for (int i = 0; i < patternLines.length; i++) {
+            System.out.printf("%s         %s%n", patternLines[i], legalMovesLines[i]);
+        }
     }
 }

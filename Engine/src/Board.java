@@ -16,10 +16,10 @@ public class Board {
     public int[] KingSquareIndex;
 
     public boolean WhiteToMove;
-    public int MoveColour = WhiteToMove ? Piece.White : Piece.Black;
-    public int OpponentColour = WhiteToMove ? Piece.Black : Piece.White;
-    public int FriendlyIndex = WhiteToMove ? WhiteIndex : BlackIndex;
-    public int OpponentIndex = 1 - FriendlyIndex;
+    public int MoveColour; // = WhiteToMove ? Piece.White : Piece.Black;
+    public int OpponentColour; // = WhiteToMove ? Piece.Black : Piece.White;
+    public int FriendlyIndex; // = WhiteToMove ? WhiteIndex : BlackIndex;
+    public int OpponentIndex; // = 1 - FriendlyIndex;
     public int PieceCount;
     public int PieceCountNoPawnsNoKings;
     public int CastlingRights;
@@ -28,6 +28,7 @@ public class Board {
     boolean cachedCheckValue;
     boolean hasCachedCheckValue;
 
+    public MoveGenerator mg;
     public Precomputed precomputed;
 
     // We store each type of piece in a bitboard regardless of colour
@@ -62,22 +63,33 @@ public class Board {
         FullMoveCount = 1; // This always starts at 1
         Square = new int[64];
         KingSquareIndex = new int[2];
+        KingSquareIndex[0] = -1;
+        KingSquareIndex[1] = -1;
 
-        Pieces = new Bitboard[6];
+        Pieces = new Bitboard[7];
         Pieces[0] = new Bitboard();
         Pieces[1] = new Bitboard();
         Pieces[2] = new Bitboard();
         Pieces[3] = new Bitboard();
         Pieces[4] = new Bitboard();
         Pieces[5] = new Bitboard();
+        Pieces[6] = new Bitboard();
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
 
         CastlingRights = 0b1111;
+        FriendlyIndex = 0;
+        OpponentIndex = 1;
+        MoveColour = 0;
+        OpponentColour = Piece.Black;
 
         precomputed = new Precomputed();
         magic = new Magic();
+    }
+
+    public Board(String fen) {
+        new Board().LoadFromFen(fen);
     }
 
     // Is current player in check ?
@@ -105,12 +117,13 @@ public class Board {
             }
         }
 
-        long enemyKnights = Pieces[Piece.MkPiece(Piece.Knight, OpponentColour)].board;
+        long enemyKnights = Pieces[Piece.Knight].board & Colours[OpponentIndex].board;
         if ((Precomputed.knightAttacks[square].board & enemyKnights) != 0) {
             return true;
         }
 
-        Bitboard enemyPawns = Pieces[Piece.MkPiece(Piece.Pawn, OpponentColour)];
+        Bitboard enemyPawns = new Bitboard(Pieces[Piece.Pawn].board
+                                           & Colours[OpponentIndex].board);
         Bitboard pawnAttackmask = WhiteToMove ?
             Precomputed.pawnAttacks[square][WhiteIndex] :
             Precomputed.pawnAttacks[square][BlackIndex];
@@ -147,7 +160,8 @@ public class Board {
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].UnsetBit(source);
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].SetBit(dest);
 
-        MovePiece(movedPiece,source, dest);
+        Square[source] = Piece.None;
+        Square[dest] = movedPiece;
 
         if (capturedType != Piece.None) {
             int captureSquare = dest;
@@ -164,13 +178,13 @@ public class Board {
             }
 
             // Remove captured piece from bitboards
-            Pieces[capturedType - 1].UnsetBit(dest);
+            Pieces[capturedType].UnsetBit(dest);
             Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
             newZobristKey ^= Zobrist.pieces[capturedPiece][captureSquare];
         }
 
         if (movedType == Piece.King) {
-            KingSquareIndex[MoveColour] = dest;
+            KingSquareIndex[MoveColour / 8] = dest;
             // Mask out side to move's castling rights
             newCastlingRights &= WhiteToMove ? 0b1100 : 0b0011;
 
@@ -180,7 +194,7 @@ public class Board {
                 int rookFrom = kingside ? dest + 1 : dest - 2;
                 int rookTo = kingside ? dest - 1 : dest + 2;
 
-                Pieces[rookP].ToggleBits(rookFrom, rookTo);
+                Pieces[Piece.Rook].ToggleBits(rookFrom, rookTo);
                 Colours[FriendlyIndex].ToggleBits(rookFrom, rookTo);
                 Square[rookFrom] = Piece.None;
                 Square[rookTo] = Piece.Rook | MoveColour;
@@ -195,8 +209,8 @@ public class Board {
             int promotionType = move.GetPromotionPiece();
             int promotionPiece = Piece.MkPiece(promotionType, MoveColour);
 
-            Pieces[movedPiece].ToggleBit(dest);
-            Pieces[promotionPiece].ToggleBit(dest);
+            Pieces[movedType].ToggleBit(dest);
+            Pieces[promotionType].ToggleBit(dest);
             Square[dest] = promotionPiece;
         }
 
@@ -231,22 +245,42 @@ public class Board {
 
 
         WhiteToMove = !WhiteToMove;
+
+        MoveColour = WhiteToMove ? Piece.White : Piece.Black;
+        OpponentColour = WhiteToMove ? Piece.Black : Piece.White;
+        FriendlyIndex = WhiteToMove ? WhiteIndex : BlackIndex;
+        OpponentIndex = 1 - FriendlyIndex;
+
         PlyCount++;
         int newFiftyMoveCount = CurrentGameState.fiftyMoveCount + 1;
+
+        AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
+        UpdateSliders();
+
         GameState newState = new GameState(capturedType,
                                            new_epFile,
                                            newCastlingRights,
                                            newFiftyMoveCount,
                                            newZobristKey);
+        moves.add(move);
         gsHistory.push(newState);
         CurrentGameState = newState;
         hasCachedCheckValue = false;
+
+        //System.out.println("After MakeMove: " + move.toString());
+        //BitboardUtil.print2(Colours[0], Colours[1], -1);
+        // System.out.println(toString());
     }
 
-    public void UnmakeMove(Move move) { UnmakeMove(move, false); }
+    public void UnmakeMove(Move move) { UnmakeMove(move, true); }
 
     public void UnmakeMove(Move move, boolean record) {
         WhiteToMove = !WhiteToMove;
+        MoveColour = WhiteToMove ? Piece.White : Piece.Black;
+        OpponentColour = WhiteToMove ? Piece.Black : Piece.White;
+        FriendlyIndex = WhiteToMove ? WhiteIndex : BlackIndex;
+        OpponentIndex = 1 - FriendlyIndex;
+
         boolean colourUndone = WhiteToMove;
 
         int source = move.source;
@@ -263,13 +297,26 @@ public class Board {
 
         if (promoUndo) {
             int promotedPiece = Square[dest];
-            int pawnPiece = Piece.MkPiece(Piece.Pawn, MoveColour);
+            int promotedType = Piece.GetType(promotedPiece);
             PieceCountNoPawnsNoKings--;
-            Pieces[promotedPiece].ToggleBit(dest);
-            Pieces[pawnPiece].ToggleBit(dest);
+            Pieces[promotedType].ToggleBit(dest);
+            Pieces[Piece.Pawn].ToggleBit(dest);
         }
 
-        MovePiece(movedPiece, dest, source);
+        //System.out.println("Moved back piece of type " + Piece.ToChar(movedType));
+        Pieces[movedType].ToggleBits(source, dest);
+        //System.out.println("Of colour " + OpponentIndex);
+        Colours[FriendlyIndex].ToggleBits(source, dest);
+
+        Square[dest] = Piece.None;
+        Square[source] = movedPiece;
+
+        // System.out.println("Current gamestate: "
+        //                    + toString() + "\n"
+        //                    + Pieces[movedType].toString() + "\n"
+        //                    + Colours[MoveColour / 8].toString() + "\n"
+        //                    + "Undoing : " + WhiteToMove);
+
 
         // Restore captured piece
         if (captureUndo) {
@@ -283,7 +330,7 @@ public class Board {
                 PieceCountNoPawnsNoKings++;
             }
 
-            Pieces[capturedPiece].ToggleBit(captureSquare);
+            Pieces[capturedType].ToggleBit(captureSquare);
             Colours[OpponentIndex].ToggleBit(captureSquare);
             Square[captureSquare] = capturedPiece;
         }
@@ -292,12 +339,11 @@ public class Board {
             KingSquareIndex[FriendlyIndex] = source;
 
             if (flag == Move.Castle) {
-                int rookP = Piece.MkPiece(Piece.Rook, MoveColour);
                 boolean kingside = dest == BoardHelper.g1 || dest == BoardHelper.g8;
                 int before = kingside ? dest + 1 : dest - 2;
                 int after = kingside ? dest - 1 : dest + 1;
 
-                Pieces[rookP].ToggleBits(after, before);
+                Pieces[Piece.Rook].ToggleBits(after, before);
                 Colours[OpponentIndex].ToggleBits(after, before);
                 Square[after] = Piece.None;
                 Square[before] = Piece.Rook;
@@ -305,6 +351,11 @@ public class Board {
         }
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
+
+        // System.out.println("After UnmakeMove: " + move.toString());
+        // BitboardUtil.print2(Colours[0], Colours[1], -1);
+        // System.out.println(toString());
+
         if (record) {
             moves.remove(moves.size() - 1);
             gsHistory.pop();
@@ -314,42 +365,34 @@ public class Board {
         }
     }
 
-    public void MovePiece(int piece, int source, int dest) {
-        //System.out.println("Moving piece: " + Piece.ToChar(piece) + " from " + source + " to " + dest);
-        Pieces[piece].ToggleBits(source, dest);
-        Colours[MoveColour / 8].ToggleBits(source, dest);
-
-        Square[source] = Piece.None;
-        Square[dest] = piece;
-    }
-
     // Update nontrivial bitboards
     public void UpdateSliders() {
-        int r = Piece.MkPiece(Piece.Rook, MoveColour);
-        int b = Piece.MkPiece(Piece.Bishop, MoveColour);
-        int q = Piece.MkPiece(Piece.Queen, MoveColour);
+        int r = Piece.Rook;
+        int b = Piece.Bishop;
+        int q = Piece.Queen;
 
-        FriendlyOrthoSliders = new Bitboard(Pieces[r].board | Pieces[q].board);
-        FriendlyDiagSliders = new Bitboard(Pieces[b].board | Pieces[q].board);
+        long orthos = Pieces[r].board | Pieces[q].board;
+        long diags = Pieces[b].board | Pieces[q].board;
 
-        int R = Piece.MkPiece(Piece.Rook, OpponentColour);
-        int B = Piece.MkPiece(Piece.Bishop, OpponentColour);
-        int Q = Piece.MkPiece(Piece.Queen, OpponentColour);
+        FriendlyOrthoSliders = new Bitboard(orthos & Colours[FriendlyIndex].board);
+        FriendlyDiagSliders = new Bitboard(diags & Colours[FriendlyIndex].board);
 
-        FriendlyOrthoSliders = new Bitboard(Pieces[R].board | Pieces[Q].board);
-        FriendlyDiagSliders = new Bitboard(Pieces[B].board | Pieces[Q].board);
+        EnemyOrthoSliders = new Bitboard(orthos & Colours[OpponentIndex].board);
+        EnemyDiagSliders = new Bitboard(diags & Colours[OpponentIndex].board);
     }
 
     public void Init() {
+        WhiteToMove = true;
         moves = new ArrayList<Move>();
         CurrentGameState = new GameState(Piece.None, 0, 0b1111, 0, 0);
         gsHistory = new Stack<GameState>();
+        gsHistory.push(CurrentGameState);
         PlyCount = 0;
         PieceCount = 0;
         PieceCountNoPawnsNoKings = 0;
         AllPieces = new Bitboard(0);
         Pieces = new Bitboard[Piece.IndexMax + 1];
-        for (int i = 1; i <= 14; i++) { Pieces[i] = new Bitboard(); }
+        for (int i = 0; i <= 14; i++) { Pieces[i] = new Bitboard(); }
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
@@ -357,7 +400,7 @@ public class Board {
         EnemyOrthoSliders = new Bitboard();
         FriendlyDiagSliders = new Bitboard();
         FriendlyOrthoSliders = new Bitboard();
-        UpdateSliders();
+        mg = new MoveGenerator(this);
     }
 
     public void LoadStartPos() {
@@ -378,26 +421,27 @@ public class Board {
             }
             else {
                 if (Character.isDigit(c)) {
-                    // file += (int) c - 48;
                     file += Character.getNumericValue(c);
                 }
                 else {
                     int index = rank * 8 + file;
                     int piece = Piece.FromChar(c);
-
-                    //System.out.println("Adding piece " + c + " at index " + index);
                     Square[index] = piece;
                     Pieces[Piece.GetType(piece)].SetBit(index);
-                    Colours[Piece.GetColour(piece) / 8].SetBit(index);
+                    Colours[Piece.GetColour(piece) >> 3].SetBit(index);
                     PieceCount++;
                     file++;
+
+                    if (Piece.GetType(piece) == Piece.King) {
+                        KingSquareIndex[Piece.GetColour(piece) / 8] = index;
+                    }
                 }
             }
         }
+        WhiteToMove = (fields[1].equals("w"));
+
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
-
-        WhiteToMove = (fields[1].equals("w"));
 
         String castle = fields[2];
         boolean whiteKC = castle.contains("K");
@@ -417,8 +461,9 @@ public class Board {
                 int p = Square[rank * 8 + file];
                 res += Piece.ToChar(p);
             }
-            res += "\n";
+            res += "\n"; //" " + (rank + 1)  + "\n";
         }
+        //res += "ABCDEFGH";
         return res;
    }
 
