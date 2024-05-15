@@ -38,7 +38,7 @@ public class Board {
 
     // Some additional bitboards for movegen purposes
     // Note : the board keeps track of pieces by absolute colour
-    // aswell as relative : "friendly"/"opponent" based on current colour's turn
+    // aswell as relative : "friendly"/"opponent" based on current turn's colour
     public Bitboard AllPieces;
     public Bitboard FriendlyOrthoSliders;
     public Bitboard FriendlyDiagSliders;
