@@ -52,7 +52,7 @@ public class Move {
 
     public boolean IsPromotion() { return flag() >= PromoteKnight; }
 
-    public boolean IsEnPassant() { return flag() == 1; }
+    public boolean IsEnPassant() { return flag() == EnPassant; }
 
     public int GetPromotionPiece() {
         switch (flag()) {

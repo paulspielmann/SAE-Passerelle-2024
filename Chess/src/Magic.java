@@ -27,13 +27,13 @@ public class Magic {
     public static Bitboard GetRookAttacks(int sq, long blockers) {
         Long key = ((blockers & RookMask[sq].board) *
                     RookMagics[sq]) >>> RookShifts[sq];
-        return RookAttacks[sq].get(key);
+        return new Bitboard(RookAttacks[sq].get(key).board);
     }
 
     public static Bitboard GetBishopAttacks(int sq, long blockers) {
         long key = ((blockers & BishopMask[sq].board) *
                     BishopMagics[sq]) >>> BishopShifts[sq];
-        return BishopAttacks[sq].get(key);
+        return new Bitboard(BishopAttacks[sq].get(key).board);
     }
 
     public Magic() {

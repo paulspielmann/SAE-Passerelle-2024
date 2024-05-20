@@ -18,6 +18,12 @@ public class GameState {
         zobristKey = 0;
     }
 
+    public GameState(int e, int c) {
+        capturedPieceType = Piece.None;
+        epFile = e;
+        castlingRights = c;
+    }
+
     public GameState(int p, int e, int c, int f, long z) {
         capturedPieceType = p;
         epFile = e;
@@ -27,12 +33,12 @@ public class GameState {
     }
 
     public boolean CanCastleQS(boolean white) {
-        int mask = white ? 1 : 3;
+        int mask = white ? 2 : 8;
         return (castlingRights & mask) != 0;
     }
 
     public boolean CanCastleKS(boolean white) {
-        int mask = white ? 0 : 2;
+        int mask = white ? 1 : 4;
         return (castlingRights & mask) != 0;
     }
 

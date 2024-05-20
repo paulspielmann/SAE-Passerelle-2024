@@ -94,44 +94,6 @@ class BitboardUtil {
         return (n > 0 ? b << n : b >>> -n);
     }
 
-    public static long ShiftSouth(Bitboard b) {
-        b.board >>>= 8;
-        return b.board;
-    }
-
-    public static long ShiftNorth(Bitboard b) {
-        b.board <<= 8;
-        return b.board;
-    }
-
-    public static long ShiftEast(Bitboard b) {
-        b.board = (b.board << 1) & BitboardUtil.NotFileA;
-        return b.board;
-    }
-
-    public static long ShiftNoEa(Bitboard b) {
-        b.board = (b.board << 9) & BitboardUtil.NotFileA;
-        return b.board;
-    }
-
-    public static long ShiftSoEa(Bitboard b) {
-        b.board = (b.board >>> 7) & BitboardUtil.NotFileA;
-        return b.board;
-    }
-
-    public static long ShiftWest(Bitboard b) {
-        b.board = (b.board >>> 1) & BitboardUtil.NotFileH;
-        return b.board;
-    }
-    public static long ShiftSoWe(Bitboard b) {
-        b.board = (b.board >>> 9) & BitboardUtil.NotFileH;
-        return b.board;
-    }
-    public static long ShiftNoWe(Bitboard b) {
-        b.board = (b.board << 7) & BitboardUtil.NotFileH;
-        return b.board;
-    }
-
     public static int PopLSB(Bitboard b) {
         int i = Long.numberOfTrailingZeros(b.board);
         b.board &= (b.board - 1);
@@ -139,22 +101,36 @@ class BitboardUtil {
     }
 
     public static long PawnAttacks(Bitboard pawns, boolean white) {
+        long res = 0L;
         if (white) {
-            return (BitboardUtil.ShiftNoEa(pawns) | BitboardUtil.ShiftNoWe(pawns));
+            res |= Shift(pawns.board, 9) & NotFileA;
+            res |= Shift(pawns.board, 7) & NotFileH;
+            return res;
         }
         else {
-            return (BitboardUtil.ShiftSoEa(pawns) | BitboardUtil.ShiftSoWe(pawns));
+            res |= Shift(pawns.board, -9) & NotFileH;
+            res |= Shift(pawns.board, -7) & NotFileA;
+            return res;
         }
     }
 
     public static String toFormattedString(long bb) {
+        return toFormattedString(bb, -1);
+    }
+
+    public static String toFormattedString(long bb, int i) {
         StringBuilder sb = new StringBuilder();
         for (int rank = 7; rank >= 0; rank--) {
             for (int file = 0; file < 8; file++) {
                 int sq = rank * 8 + file;
-                long mask = 1L << sq;
-                char b = (bb & mask) != 0 ? '1' : '0';
-                sb.append(b).append(" ");
+                if (sq == i) {
+                    sb.append("X ");
+                }
+                else {
+                    long mask = 1L << sq;
+                    char b = (bb & mask) != 0 ? '1' : '0';
+                    sb.append(b).append(" ");
+                }
             }
             sb.append("\n");
         }
@@ -180,15 +156,52 @@ class BitboardUtil {
         return sb.toString();
     }
 
-    public static void print2(Bitboard a, Bitboard b, int hsq) {
+    public static void print2(Bitboard a, Bitboard b, int hsq, String an, String bn) {
         String[] patternLines = a.toHString(hsq).split("\n");
         String[] legalMovesLines = b.toHString(hsq).split("\n");
 
-        System.out.println(" First Bitboard         Second Bitboard");
-        System.out.println("---------------         ----------------");
-
+        if (an == "" || bn == "") {
+            System.out.println(" First Bitboard         Second Bitboard");
+            System.out.println("---------------         ----------------");
+        }
+        else {
+            int columnWidth = 16;
+            int maxWidth = Math.max(an.length(), bn.length());
+            maxWidth = Math.max(maxWidth, columnWidth);
+            String pattern = "%" + (-maxWidth) + "s         %" + (-maxWidth) + "s";
+            String res = String.format(pattern,
+                                       format(an, maxWidth),
+                                       format(bn, maxWidth));
+            System.out.println(res);
+            System.out.println("---------------         ----------------");
+        }
         for (int i = 0; i < patternLines.length; i++) {
             System.out.printf("%s         %s%n", patternLines[i], legalMovesLines[i]);
+        }
+    }
+
+    public static void print2(long a, long b, String an, String bn) {
+        print2(new Bitboard(a), new Bitboard(b), an, bn);
+    }
+
+    public static void print2(Bitboard a, Bitboard b, String an, String bn) {
+        print2(a, b, -1, an, bn);
+    }
+
+    public static void print2(Bitboard a, Bitboard b, int hsq) {
+        print2(a, b, -1, "", "");
+    }
+
+    public static void print2(Bitboard a, Bitboard b) {
+        print2(a, b, -1);
+    }
+
+    public static String format(String s, int n) {
+        if (s.length() > n) {
+            return s.substring(0, n);
+        }
+        else {
+            return String.format("%-" + n + "s", s);
         }
     }
 }

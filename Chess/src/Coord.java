@@ -33,7 +33,8 @@ public class Coord {
 
     public String toString() {
         if (isValid()) {
-            return "File: " + BoardHelper.FileLetterFromIndex(file) + ";Rank: " + rank;
+             return "File: " + BoardHelper.FileLetterFromIndex(file)
+                 + "; Rank: " + BoardHelper.RealRankIndex(BoardHelper.Index(this));
         }
         else {
             return "Coord used as a direction offset, x: " + rank + "y: " + file;
