@@ -80,7 +80,7 @@ public class MoveGenerator {
     public void GenerateKingMoves(ArrayList<Move> moves) {
         // Limit movement to empty, not attacked squares
         long legalMask = ~(opponentAttackMap | friendlyPieces);
-        Bitboard kingMoves = Precomputed.kingAttacks[friendlyKingSquare];
+        Bitboard kingMoves = new Bitboard(Precomputed.kingAttacks[friendlyKingSquare].board);
         kingMoves.board &= legalMask;
 
         while (kingMoves.board != 0) {
@@ -183,8 +183,6 @@ public class MoveGenerator {
     }
 
     public void GeneratePawnMoves(ArrayList<Move> moves, boolean white) {
-        // System.out.println("Generating pawn moves");
-
         int dir = white ? 1 : -1;
         int offset = dir * 8;
         long p = board.Pieces[Piece.Pawn].board & board.Colours[index].board;
@@ -194,8 +192,13 @@ public class MoveGenerator {
         long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
         long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
 
-        Bitboard push = new Bitboard(BitboardUtil.Shift(pawns.board, offset)
-                                     & emptySquares & checkRayMask);
+        // System.out.println("generating pawn moves");
+        // System.out.println("crm:\n" + BitboardUtil.toFormattedString(checkRayMask));
+
+        long pushMask = BitboardUtil.Shift(pawns.board, offset);
+        Bitboard push = new Bitboard(pushMask & emptySquares & checkRayMask);
+
+        // System.out.println("Initial push:\n" + push.toString());
 
         Bitboard promos = new Bitboard(push.board & promotionMask & checkRayMask);
         Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
@@ -230,10 +233,18 @@ public class MoveGenerator {
             }
 
             // Double
-            Bitboard doublePush = new Bitboard( BitboardUtil.Shift(push, offset)
+
+
+            // System.out.println("Generating double pawn pushes for"
+            //                    + (whiteToMove ? " white" : " black"));
+            // System.out.println("Current push bitboard:\n" + push.toString());
+
+            Bitboard doublePush = new Bitboard( BitboardUtil.Shift(pushMask, offset)
                                                 & emptySquares
                                                 & doublePushMask
                                                 & checkRayMask);
+
+            // System.out.println("doublePush:\n" + doublePush.toString());
 
             while (doublePush.board != 0) {
                 int dest = BitboardUtil.PopLSB(doublePush);
@@ -308,15 +319,19 @@ public class MoveGenerator {
 
             Bitboard crm = new Bitboard(checkRayMask);
             if (crm.Contains(captureSquare)) {
-                Bitboard canEP = new Bitboard(pawns.board
-                                              & Precomputed.pawnAttacks[dest][enemyIndex].board);
+                Bitboard canEP = new Bitboard(
+                                 pawns.board
+                                 & Precomputed.pawnAttacks[dest][enemyIndex].board);
 
                 while (canEP.board != 0) {
                     int source = BitboardUtil.PopLSB(canEP);
+
                     if (!IsPinned(source)
                         || Precomputed.alignMask[source][friendlyKingSquare].board
                         == Precomputed.alignMask[dest][friendlyKingSquare].board) {
-                        moves.add(new Move(source, dest, Move.EnPassant));
+                        if (!InCheckAfterEP(source, dest, captureSquare)) {
+                            moves.add(new Move(source, dest, Move.EnPassant));
+                        }
                     }
                 }
             }
@@ -332,6 +347,16 @@ public class MoveGenerator {
 
     public boolean IsPinned(int square) {
         return ((pinRays >>> square) & 1) != 0;
+    }
+
+    public boolean InCheckAfterEP(int source, int dest, int capture) {
+        Bitboard orthos = board.EnemyOrthoSliders;
+        if (orthos.board != 0) {
+            long blockers = (allPieces ^ (1L << capture | 1L << source | 1L << dest));
+            Bitboard rookAttacks = Magic.GetRookAttacks(friendlyKingSquare, blockers);
+            return (rookAttacks.board & orthos.board) != 0;
+        }
+        return false;
     }
 
     public void UpdateSlideAttacks(Bitboard b, boolean ortho) {
