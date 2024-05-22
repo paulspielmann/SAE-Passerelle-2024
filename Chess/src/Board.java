@@ -7,8 +7,6 @@ public class Board {
     public static String startingFen =
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-    // "rnbqkbnr/p1pppppp/8/1p6/P7/7N/1PPPPPPP/RNBQKB1R b KQkq - 0 1";
-
     public static short WhiteIndex = 0;
     public static short BlackIndex = 1;
 
@@ -342,9 +340,9 @@ public class Board {
                 int after = kingside ? dest - 1 : dest + 1;
 
                 Pieces[Piece.Rook].ToggleBits(after, before);
-                Colours[OpponentIndex].ToggleBits(after, before);
+                Colours[FriendlyIndex].ToggleBits(after, before);
                 Square[after] = Piece.None;
-                Square[before] = Piece.Rook;
+                Square[before] = Piece.Rook | MoveColour;
             }
         }
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
@@ -381,12 +379,12 @@ public class Board {
         PlyCount = 0;
         PieceCount = 0;
         PieceCountNoPawnsNoKings = 0;
-        AllPieces = new Bitboard(0);
-        Pieces = new Bitboard[Piece.IndexMax + 1];
-        for (int i = 0; i <= 14; i++) { Pieces[i] = new Bitboard(); }
+        Pieces = new Bitboard[7];
+        for (int i = 0; i < 7; i++) { Pieces[i] = new Bitboard(); }
         Colours = new Bitboard[2];
         Colours[0] = new Bitboard();
         Colours[1] = new Bitboard();
+        AllPieces = new Bitboard(0);
         EnemyDiagSliders = new Bitboard();
         EnemyOrthoSliders = new Bitboard();
         FriendlyDiagSliders = new Bitboard();
