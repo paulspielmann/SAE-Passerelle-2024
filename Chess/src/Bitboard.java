@@ -80,12 +80,11 @@ class BitboardUtil {
 
     public static long WhiteKingSideMask = 1L << BoardHelper.f1 | 1L << BoardHelper.g1;
     public static long WhiteQueenSideMask =
-        1L << BoardHelper.b1 | 1L << BoardHelper.c1 | 1L << BoardHelper.d1;
+        1L << BoardHelper.c1 | 1L << BoardHelper.d1;
     public static long BlackKingSideMask = 1L << BoardHelper.f8 | 1L << BoardHelper.g8;
     public static long BlackQueenSideMask =
-        1L << BoardHelper.b8 | 1L << BoardHelper.c8 | 1L << BoardHelper.d8;
+        1L << BoardHelper.c8 | 1L << BoardHelper.d8;
 
-    // Should these return bitboards ? See MoveGenerator.java
     public static long Shift(Bitboard b, int n) {
         return (n > 0 ? b.board << n : b.board >>> -n);
     }

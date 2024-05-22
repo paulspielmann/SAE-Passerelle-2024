@@ -97,6 +97,7 @@ public class MoveGenerator {
                 long castleMask = whiteToMove
                     ? BitboardUtil.WhiteKingSideMask
                     : BitboardUtil.BlackKingSideMask;
+
                 if ((castleMask & blockers) == 0) {
                     int dest = whiteToMove ? BoardHelper.g1 : BoardHelper.g8;
                     moves.add(new Move(friendlyKingSquare, dest, Move.Castle));
@@ -105,8 +106,10 @@ public class MoveGenerator {
 
             // Queenside
             if (board.CurrentGameState.CanCastleQS(whiteToMove)) {
-                long castleMask = whiteToMove ?
-                    BitboardUtil.WhiteQueenSideMask : BitboardUtil.BlackQueenSideMask;
+                long castleMask = whiteToMove
+                    ? BitboardUtil.WhiteQueenSideMask
+                    : BitboardUtil.BlackQueenSideMask;
+
                 if ((castleMask & blockers) == 0) {
                     int dest = whiteToMove ? BoardHelper.c1 : BoardHelper.c8;
                     moves.add(new Move(friendlyKingSquare, dest, Move.Castle));
