@@ -192,13 +192,8 @@ public class MoveGenerator {
         long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
         long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
 
-        // System.out.println("generating pawn moves");
-        // System.out.println("crm:\n" + BitboardUtil.toFormattedString(checkRayMask));
-
-        long pushMask = BitboardUtil.Shift(pawns.board, offset);
-        Bitboard push = new Bitboard(pushMask & emptySquares & checkRayMask);
-
-        // System.out.println("Initial push:\n" + push.toString());
+        long pushMask = BitboardUtil.Shift(p, offset) & emptySquares;
+        Bitboard push = new Bitboard(pushMask & checkRayMask);
 
         Bitboard promos = new Bitboard(push.board & promotionMask & checkRayMask);
         Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
@@ -207,12 +202,13 @@ public class MoveGenerator {
         long edgeMaskB = whiteToMove ? BitboardUtil.NotFileH : BitboardUtil.NotFileA;
 
         Bitboard capturesA = new Bitboard(
-                                BitboardUtil.Shift(pawns.board & edgeMaskA, dir * 7)
+                                BitboardUtil.Shift(p & edgeMaskA, dir * 7)
                                 & enemyPieces);
 
         Bitboard capturesB = new Bitboard(
-                                BitboardUtil.Shift(pawns.board & edgeMaskB, dir * 9)
+                                BitboardUtil.Shift(p & edgeMaskB, dir * 9)
                                 & enemyPieces);
+
         Bitboard capturePromosA = new Bitboard(capturesA.board & promotionMask & checkRayMask);
         Bitboard capturePromosB = new Bitboard(capturesB.board & promotionMask & checkRayMask);
         capturesA.board &= checkRayMask & ~promotionMask;
@@ -226,33 +222,25 @@ public class MoveGenerator {
                 int source = dest - offset;
 
                 if (!IsPinned(source) ||
-                Precomputed.alignMask[source][friendlyKingSquare] ==
-                Precomputed.alignMask[dest][friendlyKingSquare]) {
+                    Precomputed.alignMask[source][friendlyKingSquare] ==
+                    Precomputed.alignMask[dest][friendlyKingSquare]) {
                     moves.add(new Move(source, dest));
                 }
             }
 
             // Double
-
-
-            // System.out.println("Generating double pawn pushes for"
-            //                    + (whiteToMove ? " white" : " black"));
-            // System.out.println("Current push bitboard:\n" + push.toString());
-
             Bitboard doublePush = new Bitboard( BitboardUtil.Shift(pushMask, offset)
                                                 & emptySquares
                                                 & doublePushMask
                                                 & checkRayMask);
-
-            // System.out.println("doublePush:\n" + doublePush.toString());
 
             while (doublePush.board != 0) {
                 int dest = BitboardUtil.PopLSB(doublePush);
                 int source = dest - offset * 2;
 
                 if (!IsPinned(source) ||
-                Precomputed.alignMask[source][friendlyKingSquare] ==
-                Precomputed.alignMask[dest][friendlyKingSquare]) {
+                    Precomputed.alignMask[source][friendlyKingSquare] ==
+                    Precomputed.alignMask[dest][friendlyKingSquare]) {
                     moves.add(new Move(source, dest, Move.PawnDoubleMove));
                 }
             }
