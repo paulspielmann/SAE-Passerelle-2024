@@ -7,6 +7,8 @@ public class Board {
     public static String startingFen =
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+    // "rnbqkbnr/p1pppppp/8/1p6/P7/7N/1PPPPPPP/RNBQKB1R b KQkq - 0 1";
+
     public static short WhiteIndex = 0;
     public static short BlackIndex = 1;
 
@@ -56,6 +58,8 @@ public class Board {
 
     // TODO:
     // repetition rule
+    // Add parameter to Make/Unmake Move to
+    // record or not the move in the game history
     // PGN
     // UCI
 
@@ -158,7 +162,7 @@ public class Board {
         long newZobristKey = CurrentGameState.zobristKey;
 
         Pieces[movedType].UnsetBit(source);
-        Pieces[movedType].SetBit(dest);
+        Pieces[movedType].ToggleBit(dest);
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].UnsetBit(source);
         Colours[WhiteToMove ? WhiteIndex : BlackIndex].SetBit(dest);
 
@@ -173,6 +177,8 @@ public class Board {
                 // the destination square
                 captureSquare = dest + (WhiteToMove ? -8 : 8);
                 Square[captureSquare] = Piece.None;
+                Pieces[Piece.Pawn].UnsetBit(captureSquare);
+                Colours[OpponentIndex].UnsetBit(captureSquare);
             }
 
             if (capturedType != Piece.Pawn) {
@@ -180,7 +186,7 @@ public class Board {
             }
 
             // Remove captured piece from bitboards
-            Pieces[capturedType].UnsetBit(dest);
+            Pieces[capturedType].ToggleBit(dest);
             Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
             newZobristKey ^= Zobrist.pieces[capturedPiece][captureSquare];
         }
@@ -270,6 +276,7 @@ public class Board {
         gsHistory.push(newState);
         CurrentGameState = newState;
         hasCachedCheckValue = false;
+        moves.add(move);
     }
 
     public void UnmakeMove(Move move) { UnmakeMove(move, true); }
@@ -343,12 +350,13 @@ public class Board {
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
 
-        moves.remove(moves.size() - 1);
         gsHistory.pop();
         CurrentGameState = gsHistory.peek();
         CastlingRights = CurrentGameState.castlingRights;
         PlyCount--;
         hasCachedCheckValue = false;
+
+        moves.remove(move);
     }
 
     // Update nontrivial bitboards
