@@ -110,7 +110,12 @@ public class MoveGenerator {
                     ? BitboardUtil.WhiteQueenSideMask
                     : BitboardUtil.BlackQueenSideMask;
 
-                if ((castleMask & blockers) == 0) {
+                long castleBlockMask = whiteToMove
+                    ? BitboardUtil.WhiteCastleBlockMask
+                    : BitboardUtil.BlackCastleBlockMask;
+
+                if ((castleMask & blockers) == 0 &&
+                    (castleBlockMask & board.AllPieces.board) == 0) {
                     int dest = whiteToMove ? BoardHelper.c1 : BoardHelper.c8;
                     moves.add(new Move(friendlyKingSquare, dest, Move.Castle));
                 }
@@ -198,7 +203,7 @@ public class MoveGenerator {
         long pushMask = BitboardUtil.Shift(p, offset) & emptySquares;
         Bitboard push = new Bitboard(pushMask & checkRayMask);
 
-        Bitboard promos = new Bitboard(push.board & promotionMask & checkRayMask);
+        Bitboard promos = new Bitboard(push.board & promotionMask);
         Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
 
         long edgeMaskA = whiteToMove ? BitboardUtil.NotFileA : BitboardUtil.NotFileH;
@@ -488,8 +493,8 @@ public class MoveGenerator {
         if (pawnAttacks.Contains(friendlyKingSquare)) {
             inDoubleCheck = inCheck;
             inCheck = true;
-            Bitboard origin = Precomputed.pawnAttacks[friendlyKingSquare][enemyIndex];
-            long pawnCheckMap = opponentPawns.board & origin.board;
+            long pawnCheckMap = opponentPawns.board
+                & BitboardUtil.PawnAttacks(board.Pieces[Piece.King], whiteToMove);
             checkRayMask |= pawnCheckMap;
         }
 

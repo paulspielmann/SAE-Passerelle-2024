@@ -93,6 +93,7 @@ public class Move {
         res += BoardHelper.RealRankIndex(source);
         res += BoardHelper.FileLetterFromIndex(dest);
         res += BoardHelper.RealRankIndex(dest);
+        res += IsPromotion() ? Piece.ToChar(GetPromotionPiece()) : "";
         return res;
     }
 }

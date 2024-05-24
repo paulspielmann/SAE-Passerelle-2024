@@ -52,6 +52,7 @@ public class Board {
     public int PlyCount;
     public int FullMoveCount;
     public ArrayList<Move> moves;
+    public ArrayList<Move> moveHistory;
     public Stack<GameState> gsHistory;
 
     // TODO:
@@ -96,6 +97,19 @@ public class Board {
         new Board().LoadFromFen(fen);
     }
 
+
+    // TODO: Separate this to a game result class
+    // TODO: and also handle stalemate and threefold repetitions
+    public boolean IsCheckMate() {
+        // moves = mg.GenerateMoves();
+        // if (moves.size() == 0) {
+        //     if (InCheck()) {
+        //         return true;
+        //     }
+        // }
+        return false;
+    }
+
     // Is current player in check ?
     public boolean InCheck() {
         if (hasCachedCheckValue) { return cachedCheckValue; }
@@ -105,7 +119,7 @@ public class Board {
     }
 
     public boolean CalculateCheckState() {
-        int square = KingSquareIndex[MoveColour / 8];
+        int square = KingSquareIndex[FriendlyIndex];
         Bitboard blockers = AllPieces;
 
         if (EnemyOrthoSliders.board != 0) {
@@ -128,6 +142,7 @@ public class Board {
 
         Bitboard enemyPawns = new Bitboard(Pieces[Piece.Pawn].board
                                            & Colours[OpponentIndex].board);
+
         Bitboard pawnAttackmask = WhiteToMove ?
             Precomputed.pawnAttacks[square][WhiteIndex] :
             Precomputed.pawnAttacks[square][BlackIndex];
@@ -147,7 +162,6 @@ public class Board {
 
         int movedPiece = Square[source];
         int movedType = Piece.GetType(movedPiece);
-
         int capturedPiece = Square[dest];
         int capturedType = Piece.GetType(capturedPiece);
 
@@ -160,12 +174,12 @@ public class Board {
         long newZobristKey = CurrentGameState.zobristKey;
 
         Pieces[movedType].UnsetBit(source);
-        Pieces[movedType].ToggleBit(dest);
-        Colours[WhiteToMove ? WhiteIndex : BlackIndex].UnsetBit(source);
-        Colours[WhiteToMove ? WhiteIndex : BlackIndex].SetBit(dest);
+        Pieces[movedType].SetBit(dest);
+        Colours[FriendlyIndex].UnsetBit(source);
+        Colours[FriendlyIndex].SetBit(dest);
 
-        Square[source] = Piece.None;
         Square[dest] = movedPiece;
+        Square[source] = Piece.None;
 
         if (capturedType != Piece.None) {
             int captureSquare = dest;
@@ -184,7 +198,10 @@ public class Board {
             }
 
             // Remove captured piece from bitboards
-            Pieces[capturedType].ToggleBit(dest);
+            if (movedType != capturedType) {
+                Pieces[capturedType].UnsetBit(dest);
+            }
+
             Colours[WhiteToMove ? BlackIndex : WhiteIndex].UnsetBit(dest);
             newZobristKey ^= Zobrist.pieces[capturedPiece][captureSquare];
         }
@@ -200,7 +217,8 @@ public class Board {
                 int rookFrom = kingside ? dest + 1 : dest - 2;
                 int rookTo = kingside ? dest - 1 : dest + 1;
 
-                Pieces[Piece.Rook].ToggleBits(rookFrom, rookTo);
+                Pieces[Piece.Rook].SetBit(rookTo);
+                Pieces[Piece.Rook].UnsetBit(rookFrom);
                 Colours[FriendlyIndex].ToggleBits(rookFrom, rookTo);
                 Square[rookFrom] = Piece.None;
                 Square[rookTo] = Piece.Rook | MoveColour;
@@ -257,7 +275,6 @@ public class Board {
         FriendlyIndex = WhiteToMove ? WhiteIndex : BlackIndex;
         OpponentIndex = 1 - FriendlyIndex;
 
-        PlyCount++;
         int newFiftyMoveCount = CurrentGameState.fiftyMoveCount + 1;
 
         CastlingRights = newCastlingRights;
@@ -270,11 +287,15 @@ public class Board {
                                            newCastlingRights,
                                            newFiftyMoveCount,
                                            newZobristKey);
-        moves.add(move);
-        gsHistory.push(newState);
-        CurrentGameState = newState;
+
+        if (record) {
+            PlyCount++;
+            moveHistory.add(move);
+            gsHistory.push(newState);
+            CurrentGameState = newState;
+        }
+
         hasCachedCheckValue = false;
-        moves.add(move);
     }
 
     public void UnmakeMove(Move move) { UnmakeMove(move, true); }
@@ -326,8 +347,8 @@ public class Board {
                 PieceCountNoPawnsNoKings++;
             }
 
-            Pieces[capturedType].ToggleBit(captureSquare);
-            Colours[OpponentIndex].ToggleBit(captureSquare);
+            Pieces[capturedType].SetBit(captureSquare);
+            Colours[OpponentIndex].SetBit(captureSquare);
             Square[captureSquare] = capturedPiece;
         }
 
@@ -340,7 +361,8 @@ public class Board {
                 int after = kingside ? dest - 1 : dest + 1;
 
                 Pieces[Piece.Rook].ToggleBits(after, before);
-                Colours[FriendlyIndex].ToggleBits(after, before);
+                Colours[FriendlyIndex].SetBit(before);
+                Colours[FriendlyIndex].UnsetBit(after);
                 Square[after] = Piece.None;
                 Square[before] = Piece.Rook | MoveColour;
             }
@@ -348,13 +370,15 @@ public class Board {
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
 
-        gsHistory.pop();
-        CurrentGameState = gsHistory.peek();
-        CastlingRights = CurrentGameState.castlingRights;
-        PlyCount--;
+        if (record) {
+            gsHistory.pop();
+            CurrentGameState = gsHistory.peek();
+            CastlingRights = CurrentGameState.castlingRights;
+            PlyCount--;
+        }
         hasCachedCheckValue = false;
 
-        moves.remove(move);
+        moveHistory.remove(move);
     }
 
     // Update nontrivial bitboards
@@ -376,6 +400,7 @@ public class Board {
     public void Init() {
         WhiteToMove = true;
         moves = new ArrayList<Move>();
+        moveHistory = new ArrayList<Move>();
         PlyCount = 0;
         PieceCount = 0;
         PieceCountNoPawnsNoKings = 0;
@@ -489,6 +514,19 @@ public class Board {
             }
             res += "\n";
         }
+        return res;
+    }
+
+    public String SquareArrayToString() {
+        String res = "[";
+
+        for (int i: Square) {
+            if (i != 0) { res += Piece.ToChar(i) + ", "; }
+        }
+
+        res = res.substring(0, res.length() - 2);
+        res += "]";
+
         return res;
     }
 }

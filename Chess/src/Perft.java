@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Perft {
     // https://www.chessprogramming.org/Perft
     // Given a starting position and gamestate information
@@ -11,14 +13,15 @@ public class Perft {
     public static long checks;
     public static long checkmates;
 
-    public static long RunPerft(Board b, int depth) {
+    public static long RunPerft(Board b, int depth, boolean print) {
         if (depth == 0) {
             return 1;
         }
 
         long nodes = 0;
 
-        for(Move move: b.mg.GenerateMoves()) {
+        ArrayList<Move> moves = b.mg.GenerateMoves();
+        for (Move move : moves) {
             if (b.Square[move.dest] != Piece.None) {
                 captures++;
             }
@@ -27,35 +30,56 @@ public class Perft {
                 ep++;
             }
 
-            if (move.IsPromotion()) {
-                promotions++;
-            }
-
             if (move.flag == Move.Castle) {
                 castles++;
             }
 
             b.MakeMove(move);
-            // System.out.println("Board after make move: " + move.toString()
-            //                   + "\n" + b.toString());
+
+            if (print) {
+                System.out.println("After MakeMove(): " + move.toString() + "\n"
+                                   + b.toString());
+
+                BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                                    "White pieces", "Black pieces");
+
+                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
+                }
+            }
+
+            if (move.IsPromotion()) {
+                promotions++;
+            }
 
             if (b.InCheck()) {
                 checks++;
             }
 
-            nodes += RunPerft(b, depth - 1);
+            if (b.IsCheckMate()) {
+                checkmates++;
+            }
+
+            nodes += RunPerft(b, depth - 1, print);
             b.UnmakeMove(move);
-            // System.out.println("Board after unmake move: " + move.toString()
-            //                   + "\n" + b.toString());
+
+            if (print) {
+                System.out.println("After UNMakeMove(): " + move.toString() + "\n"
+                                   + b.toString());
+
+                BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                                    "White pieces", "Black pieces");
+
+                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
+                }
+            }
 
         }
-
         return nodes;
     }
 
-    public static long PerftDivide(Board b, int depth) {
-        System.out.println("Running Perft divide at depth " + depth);
-
+    public static long PerftDivide(Board b, int depth, boolean print) {
         long totalNodes = 0;
         captures = 0;
         ep = 0;
@@ -63,9 +87,25 @@ public class Perft {
         promotions = 0;
         checks = 0;
 
-        for (Move move: b.mg.GenerateMoves()) {
+        System.out.println("Initial pos:\n" + b.toString());
+
+        for (Move move : b.mg.GenerateMoves()) {
             if (b.Square[move.dest] != Piece.None) {
                 captures++;
+            }
+
+            b.MakeMove(move);
+
+            if (print) {
+                System.out.println("After MakeMove(): " + move.toString() + "\n"
+                        + b.toString());
+
+                BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                                    "White pieces", "Black pieces");
+
+                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
+                }
             }
 
             if (move.IsEnPassant()) {
@@ -80,22 +120,27 @@ public class Perft {
                 castles++;
             }
 
-            b.MakeMove(move);
-
-            // System.out.println("Board after make move: " + move.toString()
-            //                   + "\n" + b.toString());
-
-
             if (b.InCheck()) {
                 checks++;
             }
 
-            long nodes = RunPerft(b, depth - 1);
+            long nodes = RunPerft(b, depth - 1, print);
 
             b.UnmakeMove(move);
 
-            // System.out.println("Board after unmake move: " + move.toString()
-            //                   + "\n" + b.toString());
+            if (print) {
+                System.out.println("After UNMakeMove(): " + move.toString() + "\n"
+                                   + b.toString());
+
+                BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                                    "White pieces", "Black pieces");
+
+                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
+                }
+            }
+
+            //System.out.println("After " + depth + " iterations:\n" + b.toString());
 
 
             System.out.println(move.toString() + ": " + nodes);
@@ -107,7 +152,8 @@ public class Perft {
                            + ", ep: " + ep
                            + ", castles: " + castles
                            + ", promotions: " + promotions
-                           + ", checks: " + checks);
+                           + ", checks: " + checks
+                           + ", checkmates: " + checkmates);
         return totalNodes;
     }
 }
