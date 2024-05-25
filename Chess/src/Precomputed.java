@@ -40,6 +40,10 @@ public class Precomputed {
     public static int[][] kingDist;
     public static int[] centreDist;
 
+    public static boolean PiecesAlign(int a, int b, int x) {
+        return alignMask[a][x].equals(alignMask[b][x]);
+    }
+
     public static int nRookMovesToSquare(int source, int dest) {
         return manhattanDist[source][dest];
     }
@@ -78,8 +82,6 @@ public class Precomputed {
             edgeDistance[i][7] = Math.min(S, W);
 
             // Pawns
-            var whiteCaptures = new ArrayList<>();
-            ArrayList<Byte> blackCaptures = new ArrayList<>();
             pawnAttacks[i] = new Bitboard[2];
             pawnAttacks[i][0] = new Bitboard();
             pawnAttacks[i][1] = new Bitboard();
@@ -144,6 +146,7 @@ public class Precomputed {
             kingAttacks[i] = new Bitboard();
             for (int delta: dirs) {
                 int square = i + delta;
+
                 if (square >= 0 && square < 64) {
                     int Y = square / 8;
                     int X = square - Y * 8;
@@ -194,10 +197,10 @@ public class Precomputed {
                 Coord delta = Coord.Sub(B, A);
                 Coord dir = new Coord(Sign(delta.file), Sign(delta.rank));
 
+                alignMask[a][b] = new Bitboard();
                 for (int i = -8; i < 8; i++) {
                     Coord c = Coord.Add(new Coord(a), Coord.Scale(dir, i));
                     if (c.isValid()) {
-                        alignMask[a][b] = new Bitboard();
                         alignMask[a][b].SetBit(BoardHelper.Index(c));
                     }
                 }

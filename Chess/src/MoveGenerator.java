@@ -217,21 +217,21 @@ public class MoveGenerator {
                                 BitboardUtil.Shift(p & edgeMaskB, dir * 9)
                                 & enemyPieces);
 
-        Bitboard capturePromosA = new Bitboard(capturesA.board & promotionMask & checkRayMask);
-        Bitboard capturePromosB = new Bitboard(capturesB.board & promotionMask & checkRayMask);
+        Bitboard capturePromosA = new Bitboard(capturesA.board
+                                               & promotionMask & checkRayMask);
+        Bitboard capturePromosB = new Bitboard(capturesB.board
+                                               & promotionMask & checkRayMask);
         capturesA.board &= checkRayMask & ~promotionMask;
         capturesB.board &= checkRayMask & ~promotionMask;
 
         if (generateQuietMoves) {
-
             // Single pushes
             while (pushNoPromo.board != 0) {
                 int dest = BitboardUtil.PopLSB(pushNoPromo);
                 int source = dest - offset;
 
                 if (!IsPinned(source) ||
-                    Precomputed.alignMask[source][friendlyKingSquare] ==
-                    Precomputed.alignMask[dest][friendlyKingSquare]) {
+                    Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                     moves.add(new Move(source, dest));
                 }
             }
@@ -247,8 +247,7 @@ public class MoveGenerator {
                 int source = dest - offset * 2;
 
                 if (!IsPinned(source) ||
-                    Precomputed.alignMask[source][friendlyKingSquare] ==
-                    Precomputed.alignMask[dest][friendlyKingSquare]) {
+                    Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                     moves.add(new Move(source, dest, Move.PawnDoubleMove));
                 }
             }
@@ -259,8 +258,7 @@ public class MoveGenerator {
             int source = dest - dir * 7;
 
             if (!IsPinned(source) ||
-            Precomputed.alignMask[source][friendlyKingSquare] ==
-            Precomputed.alignMask[dest][friendlyKingSquare]) {
+                Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 moves.add(new Move(source, dest));
             }
         }
@@ -270,8 +268,7 @@ public class MoveGenerator {
             int source = dest - dir * 9;
 
             if (!IsPinned(source) ||
-            Precomputed.alignMask[source][friendlyKingSquare] ==
-            Precomputed.alignMask[dest][friendlyKingSquare]) {
+                Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 moves.add(new Move(source, dest));
             }
         }
@@ -289,9 +286,8 @@ public class MoveGenerator {
             int source = dest - dir * 7;
 
             if (!IsPinned(source) ||
-            Precomputed.alignMask[source][friendlyKingSquare] ==
-            Precomputed.alignMask[dest][friendlyKingSquare]) {
-                                GeneratePromotions(source, dest, moves);
+                Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
+                GeneratePromotions(source, dest, moves);
             }
         }
 
@@ -300,8 +296,7 @@ public class MoveGenerator {
             int source = dest - dir * 9;
 
             if (!IsPinned(source) ||
-            Precomputed.alignMask[source][friendlyKingSquare] ==
-            Precomputed.alignMask[dest][friendlyKingSquare]) {
+                Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 GeneratePromotions(source, dest, moves);
             }
         }
@@ -322,9 +317,8 @@ public class MoveGenerator {
                 while (canEP.board != 0) {
                     int source = BitboardUtil.PopLSB(canEP);
 
-                    if (!IsPinned(source)
-                        || Precomputed.alignMask[source][friendlyKingSquare].board
-                        == Precomputed.alignMask[dest][friendlyKingSquare].board) {
+                    if (!IsPinned(source) ||
+                        Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                         if (!InCheckAfterEP(source, dest, captureSquare)) {
                             moves.add(new Move(source, dest, Move.EnPassant));
                         }

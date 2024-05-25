@@ -28,6 +28,8 @@ public class Bitboard implements Serializable {
         board = b;
     }
 
+    public boolean equals(Bitboard b) { return board.equals(board); }
+
     public void ToggleBit(int index) {
         board ^= 1L << index;
     }
@@ -79,11 +81,15 @@ class BitboardUtil {
     public static long DarkSquares = 0xAA55AA55AA55AA55L;
 
     public static long WhiteKingSideMask = 1L << BoardHelper.f1 | 1L << BoardHelper.g1;
+    public static long BlackKingSideMask = 1L << BoardHelper.f8 | 1L << BoardHelper.g8;
+
     public static long WhiteQueenSideMask =
         1L << BoardHelper.c1 | 1L << BoardHelper.d1;
-    public static long BlackKingSideMask = 1L << BoardHelper.f8 | 1L << BoardHelper.g8;
     public static long BlackQueenSideMask =
         1L << BoardHelper.c8 | 1L << BoardHelper.d8;
+
+    public static long WhiteCastleBlockMask = WhiteQueenSideMask | 1L << BoardHelper.b1;
+    public static long BlackCastleBlockMask = BlackQueenSideMask | 1L << BoardHelper.b8;
 
     public static long Shift(Bitboard b, int n) {
         return (n > 0 ? b.board << n : b.board >>> -n);
