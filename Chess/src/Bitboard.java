@@ -28,7 +28,7 @@ public class Bitboard implements Serializable {
         board = b;
     }
 
-    public boolean equals(Bitboard b) { return board.equals(board); }
+    public boolean equals(Bitboard b) { return board.equals(b.board); }
 
     public void ToggleBit(int index) {
         board ^= 1L << index;
