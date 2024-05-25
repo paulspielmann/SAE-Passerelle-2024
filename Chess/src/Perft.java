@@ -40,12 +40,14 @@ public class Perft {
                 System.out.println("After MakeMove(): " + move.toString() + "\n"
                                    + b.toString());
 
-                BitboardUtil.print2(b.Colours[0], b.Colours[1],
-                                    "White pieces", "Black pieces");
+                // BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                //                     "White pieces", "Black pieces");
 
-                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
-                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
-                }
+                // for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                //     BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i],
+                //                         Piece.ToChar(i) + " bitboard",
+                //                         Piece.ToChar(b.Pieces.length - i) + " bitboard");
+                // }
             }
 
             if (move.IsPromotion()) {
@@ -67,12 +69,15 @@ public class Perft {
                 System.out.println("After UNMakeMove(): " + move.toString() + "\n"
                                    + b.toString());
 
-                BitboardUtil.print2(b.Colours[0], b.Colours[1],
-                                    "White pieces", "Black pieces");
+                // BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                //                     "White pieces", "Black pieces");
 
-                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
-                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
-                }
+                // for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                //     BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i],
+                //                         Piece.ToChar(i) + " bitboard",
+                //                         Piece.ToChar(b.Pieces.length - i) + " bitboard");
+
+                // }
             }
 
         }
@@ -100,12 +105,14 @@ public class Perft {
                 System.out.println("After MakeMove(): " + move.toString() + "\n"
                         + b.toString());
 
-                BitboardUtil.print2(b.Colours[0], b.Colours[1],
-                                    "White pieces", "Black pieces");
+                // BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                //                     "White pieces", "Black pieces");
 
-                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
-                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
-                }
+                // for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                //     BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i],
+                //                         Piece.ToChar(i) + " bitboard",
+                //                         Piece.ToChar(b.Pieces.length - i) + " bitboard");
+                // }
             }
 
             if (move.IsEnPassant()) {
@@ -132,12 +139,14 @@ public class Perft {
                 System.out.println("After UNMakeMove(): " + move.toString() + "\n"
                                    + b.toString());
 
-                BitboardUtil.print2(b.Colours[0], b.Colours[1],
-                                    "White pieces", "Black pieces");
+                // BitboardUtil.print2(b.Colours[0], b.Colours[1],
+                //                     "White pieces", "Black pieces");
 
-                for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
-                    BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i]);
-                }
+                // for (int i = 1; i < b.Pieces.length / 2 + 1; i++) {
+                //     BitboardUtil.print2(b.Pieces[i], b.Pieces[b.Pieces.length - i],
+                //                         Piece.ToChar(i) + " bitboard",
+                //                         Piece.ToChar(b.Pieces.length - i) + " bitboard");
+                // }
             }
 
             //System.out.println("After " + depth + " iterations:\n" + b.toString());

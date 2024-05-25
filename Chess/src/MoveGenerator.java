@@ -17,7 +17,11 @@ public class MoveGenerator {
     // checkRayMask -> bitboard where 1s are squares where a piece
     // aims at the friendly king. When not in check it's set to all 1's
     public long checkRayMask;
-    public long pinRays; // Rays where a slider piece pins
+
+    // Rays where a slider piece pins
+    public long pinRaysOrthogonal;
+    public long pinRaysDiagonal;
+
     public long notPinRays;
     public long opponentAttackMap;
     public long opponentAttackMapNoPawns;
@@ -43,7 +47,8 @@ public class MoveGenerator {
         inCheck = false;
         inDoubleCheck = false;
         checkRayMask = 0;
-        pinRays = 0;
+        pinRaysDiagonal = 0;
+        pinRaysOrthogonal = 0;
 
         whiteToMove = board.WhiteToMove;
         index = whiteToMove ? Board.WhiteIndex : Board.BlackIndex;
@@ -133,8 +138,8 @@ public class MoveGenerator {
         Bitboard diags = board.FriendlyDiagSliders;
 
         if (inCheck) {
-            orthos.board &= ~pinRays;
-            diags.board &= ~pinRays;
+            orthos.board &= ~(pinRaysDiagonal | pinRaysOrthogonal);
+            diags.board &= ~(pinRaysDiagonal | pinRaysOrthogonal);
         }
 
         while (orthos.board != 0) {
@@ -197,12 +202,10 @@ public class MoveGenerator {
 
         Bitboard pawns = new Bitboard(p);
 
-        long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
-        long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
-
         long pushMask = BitboardUtil.Shift(p, offset) & emptySquares;
         Bitboard push = new Bitboard(pushMask & checkRayMask);
 
+        long promotionMask = white ? BitboardUtil.Rank8 : BitboardUtil.Rank1;
         Bitboard promos = new Bitboard(push.board & promotionMask);
         Bitboard pushNoPromo = new Bitboard(push.board & ~promotionMask);
 
@@ -237,6 +240,7 @@ public class MoveGenerator {
             }
 
             // Double
+            long doublePushMask = white ? BitboardUtil.Rank4 : BitboardUtil.Rank5;
             Bitboard doublePush = new Bitboard( BitboardUtil.Shift(pushMask, offset)
                                                 & emptySquares
                                                 & doublePushMask
@@ -268,7 +272,7 @@ public class MoveGenerator {
             int source = dest - dir * 9;
 
             if (!IsPinned(source) ||
-                Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
+                 Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 moves.add(new Move(source, dest));
             }
         }
@@ -276,7 +280,7 @@ public class MoveGenerator {
         while (promos.board != 0) {
             int dest = BitboardUtil.PopLSB(promos);
             int source = dest - offset;
-            if (!IsPinned(source)) {
+            if (!IsPinnedDiagonal(source)) {
                 GeneratePromotions(source, dest, moves);
             }
         }
@@ -285,7 +289,7 @@ public class MoveGenerator {
             int dest = BitboardUtil.PopLSB(capturePromosA);
             int source = dest - dir * 7;
 
-            if (!IsPinned(source) ||
+            if (!IsPinnedOrthogonal(source) && !IsPinnedDiagonal(source) ||
                 Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 GeneratePromotions(source, dest, moves);
             }
@@ -295,7 +299,7 @@ public class MoveGenerator {
             int dest = BitboardUtil.PopLSB(capturePromosB);
             int source = dest - dir * 9;
 
-            if (!IsPinned(source) ||
+            if (!IsPinnedOrthogonal(source) && !IsPinnedDiagonal(source) ||
                 Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 GeneratePromotions(source, dest, moves);
             }
@@ -336,7 +340,16 @@ public class MoveGenerator {
     }
 
     public boolean IsPinned(int square) {
+        long pinRays = pinRaysDiagonal | pinRaysOrthogonal;
         return ((pinRays >>> square) & 1) != 0;
+    }
+
+    public boolean IsPinnedDiagonal(int square) {
+        return ((pinRaysDiagonal >>> square) & 1) != 0;
+    }
+
+    public boolean IsPinnedOrthogonal(int square) {
+        return ((pinRaysOrthogonal >>> square) & 1) != 0;
     }
 
     public boolean InCheckAfterEP(int source, int dest, int capture) {
@@ -428,12 +441,17 @@ public class MoveGenerator {
                     // Enemy piece
                     else {
                         int pieceType = Piece.GetType(piece);
+                        boolean ortho = Piece.IsLinearSlider(pieceType);
 
-                        if (diag && Piece.IsDiagonalSlider(pieceType) ||
-                            !diag && Piece.IsLinearSlider(pieceType)) {
+                        if (diag && !ortho || !diag && ortho) {
                             // Friendly piece is blocking check -> pin
                             if (isFriendlyAlongRay) {
-                                pinRays |= rayMask;
+                                if (ortho) {
+                                    pinRaysOrthogonal |= rayMask;
+                                }
+                                else {
+                                    pinRaysDiagonal |= rayMask;
+                                }
                             }
                             // No blockers -> check
                             else {
@@ -457,7 +475,7 @@ public class MoveGenerator {
             }
         }
 
-        notPinRays = ~pinRays;
+        notPinRays = ~(pinRaysDiagonal | pinRaysOrthogonal);
 
         long eKnightAttacks = 0;
         Bitboard knights = new Bitboard(board.Pieces[Piece.Knight].board

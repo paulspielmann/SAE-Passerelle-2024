@@ -24,7 +24,7 @@ public class Piece {
     public static int BlackQueen = Queen | Black; // 13
     public static int BlackKing = King | Black; // 14
 
-    public static int IndexMax = BlackKing; // = 14
+   public static int IndexMax = BlackKing; // = 14
 
     public static int[] PieceIndices =
     {
