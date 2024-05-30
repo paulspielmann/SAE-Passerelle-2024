@@ -1,9 +1,10 @@
 <script setup>
+import Accueil from './components/accueil.vue';
 import Echiquier from './components/echiquier.vue'
 </script>
 
 <template>
-  <main>
+  <main>    
     <Echiquier />
   </main>
 </template>

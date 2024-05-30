@@ -1,6 +1,6 @@
 CREATE TABLE Utilisateurs (
     ID_utilisateur SERIAL PRIMARY KEY,
-    Nom VARCHAR(100),
+    Mdp VARCHAR(100),
     Email VARCHAR(100)
 );
 
