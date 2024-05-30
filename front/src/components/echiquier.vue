@@ -26,19 +26,44 @@
       </div>
       <div class="moves-block" ref="movesBlock">
         <h2>Coups joués</h2>
-        <table>
-          <tbody>
-            <tr v-for="(move, index) in moves" :key="index">
-              <td>{{ index + 1 }}</td>
-              <td>{{ move }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="moves-content">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Blancs</th>
+                <th>Noirs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(move, index) in moves" :key="index" @click="viewBoardState(index)">
+                <td>{{ index + 1 }}</td>
+                <td>{{ move.white }}</td>
+                <td>{{ move.black }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div v-if="showBoardState" class="board-container">
+        <h2>État de l'échiquier</h2>
+        <div id="board">
+          <div class="row" v-for="row in showBoardState" :key="row.id">
+            <div
+              class="square"
+              v-for="square in row.squares"
+              :key="square.id"
+              :class="[square.color, { highlight: square.highlight }]"
+              :style="{ cursor: square.piece ? 'grab' : 'default' }"
+            >
+              <img v-if="square.piece" :src="getPieceImage(square.piece)" :alt="square.piece" class="piece-image" draggable="false" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 
 
 
@@ -77,12 +102,14 @@ export default {
         white_pawn: whitePawnImage,
       },
       rows: this.initializeBoard(),
-      timeRemainingTop: 600,  
-      timeRemainingBottom: 600,  
+      timeRemainingTop: 600,
+      timeRemainingBottom: 600,
       moves: [],
+      boardStates: [],
       dragStart: null,
-      currentPlayer: 'white',  
+      currentPlayer: 'white',
       timer: null,
+      showBoardState: null,
     };
   },
   mounted() {
@@ -161,7 +188,11 @@ export default {
     movePiece(startSquare, endSquare) {
       endSquare.piece = startSquare.piece;
       startSquare.piece = null;
-      this.moves.push(`${startSquare.id}-${endSquare.id}`);
+      this.moves.push({
+        white: this.currentPlayer === 'white' ? `${startSquare.id}-${endSquare.id}` : '',
+        black: this.currentPlayer === 'black' ? `${startSquare.id}-${endSquare.id}` : '',
+      });
+      this.boardStates.push(this.getBoardState());
       this.scrollToBottom();
     },
     switchPlayer() {
@@ -195,24 +226,32 @@ export default {
         const movesBlock = this.$refs.movesBlock;
         movesBlock.scrollTop = movesBlock.scrollHeight;
       });
+    },
+    getBoardState() {
+      return JSON.parse(JSON.stringify(this.rows));
+    },
+    viewBoardState(index) {
+      this.showBoardState = this.boardStates[index];
+    },
+    restoreBoardState(state) {
+      this.rows = JSON.parse(JSON.stringify(state));
     }
   },
 };
 </script>
 
 
+
 <style scoped>
-
-
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f7f7f7;
   color: #333;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Empêcher le défilement */
+  overflow: hidden;
   display: flex;
-  height: 100vh; /* Hauteur de la page sur 100% de la vue */
+  height: 100vh;
 }
 
 .container {
@@ -265,11 +304,52 @@ a:hover {
   grid-gap: 0;
   width: 800px;
   margin: auto;
-  user-select: none; 
+  user-select: none;
 }
 
 .row {
   display: contents;
+}
+
+.moves-block {
+  width: 300px;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+}
+
+.moves-header {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 10;
+  text-align: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.moves-content {
+  height: calc(100% - 40px);
+  overflow-y: auto;
+}
+
+.moves-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.moves-content td, .moves-content th {
+  padding: 5px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.moves-content tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.moves-content tr:hover {
+  background-color: #ddd;
 }
 
 .square {
@@ -280,16 +360,16 @@ a:hover {
   justify-content: center;
   border: 1px solid #000;
   cursor: pointer;
-  outline: none; 
-  user-select: none; 
+  outline: none;
+  user-select: none;
 }
 
 .piece-image {
   width: 80px;
   height: 80px;
   pointer-events: none;
-  outline: none; 
-  user-select: none; 
+  outline: none;
+  user-select: none;
 }
 
 .light {
@@ -301,9 +381,8 @@ a:hover {
 }
 
 .highlight {
-  background-color: yellow !important; 
+  background-color: yellow !important;
 }
-
 
 .timer {
   font-size: 24px;
@@ -314,12 +393,6 @@ a:hover {
 
 .timer.active {
   color: #FF4500;
-}
-
-.moves-block {
-  width: 300px;
-  height: 400px; 
-  overflow-y: auto; 
 }
 
 .moves-block h2 {
@@ -358,9 +431,4 @@ a:hover {
   align-items: center;
   font-weight: bold;
 }
-
 </style>
-
-
-
-
