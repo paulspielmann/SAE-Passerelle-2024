@@ -1,11 +1,11 @@
 <script setup>
 import Accueil from './components/accueil.vue';
-import Echiquier from './components/echiquier.vue'
+import Board from './components/board.vue'
 </script>
 
 <template>
   <main>    
-    <Echiquier />
+    <Board />
   </main>
 </template>
 
