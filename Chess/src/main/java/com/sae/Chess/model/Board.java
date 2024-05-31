@@ -485,6 +485,49 @@ public class Board {
         UpdateMoves();
     }
 
+    public String toFenString() {
+        StringBuilder res = new StringBuilder();
+        
+        for (int rank = 7; rank >= 0; rank--) {
+            int empties = 0;
+            for (int file = 0; file < 8; file++) {
+                int piece = Square[rank * 8 + file];
+                if (piece == Piece.None) {
+                    empties++;
+                }
+                else {
+                    if (empties > 0) {
+                        res.append(empties);
+                        empties = 0;
+                    }
+                    res.append(Piece.ToChar(piece));
+                }
+            }
+            if (empties > 0) {
+                res.append(empties);
+            }
+            if (rank > 0) {
+                res.append('/');
+            }
+        }
+
+        res.append(' ').append(WhiteToMove ? 'w' : 'b');
+
+        res.append(' ');
+        boolean whiteKC = (CurrentGameState.castlingRights & 1) == 1;
+        boolean whiteQC = (CurrentGameState.castlingRights >> 1 & 1) == 1;
+        boolean blackKC = (CurrentGameState.castlingRights >> 2 & 1) == 1;
+        boolean blackQC = (CurrentGameState.castlingRights >> 3 & 1) == 1;
+        res.append(whiteKC ? "K" : "").append(whiteQC ? "Q" : "")
+        .append(blackKC ? "k" : "").append(blackQC ? "q" : "");
+
+        res.append(" - "); // TODO: Fix en passant
+
+        res.append(" " + CurrentGameState.fiftyMoveCount);
+        res.append(" " + ((PlyCount / 2) + 1));
+        return res.toString();
+    }
+
     public String toString() {
         StringBuilder res = new StringBuilder();
         String[] data = new String[8];

@@ -1,6 +1,13 @@
 package com.sae.Chess.model;
 
-public class Move {
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Move implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // A square index (0 to 63) can fit in just 6 bits. This allows us to
     // encode a move in a 16 bit short : 6 bits of source and destination
     // squares, with 4 remaining bits for additional info (promo, en passant..)
@@ -39,7 +46,10 @@ public class Move {
         this(source, dest, Move.None);
     }
 
-    public Move(int source, int dest, int flag) {
+    @JsonCreator
+    public Move(@JsonProperty("source") int source, 
+                @JsonProperty("dest") int dest, 
+                @JsonProperty("flag") int flag) {
         value = (short) (source | dest << 6 | flag << 12);
         this.source = source;
         this.dest = dest;

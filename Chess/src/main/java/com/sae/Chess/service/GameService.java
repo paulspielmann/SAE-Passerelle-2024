@@ -24,7 +24,7 @@ public class GameService {
     public GameService(int t, int i) {
         this.board = new Board();
         this.whiteTimer = new PlayerTimer(t, i, this::onWhiteTimeout);
-        this.whiteTimer = new PlayerTimer(t, i, this::onBlackTimeout);
+        this.blackTimer = new PlayerTimer(t, i, this::onBlackTimeout);
         
         this.whiteToMove = true;
         this.currentPlayerMoves = new ArrayList<>();
@@ -45,10 +45,12 @@ public class GameService {
         whiteTimer.start();
     }
 
-    public void MakeMove(Move move) {
+    // Makes a move on the board and returns the FEN string of the new position
+    public String MakeMove(Move move) {
         board.MakeMove(move);
         SwitchTurn();
         currentPlayerMoves = board.moves;
+        return board.toFenString();
     }
 
     public void SwitchTurn() {

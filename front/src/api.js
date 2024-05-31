@@ -14,7 +14,7 @@ export const getMoves = async () => {
 
 export const makeMove = async (move) => {
     try {
-        await axios.post(`${API_URL}/move`, move);
+        const response = await axios.post(`${API_URL}/move`, move);
         return response.data;
     } catch (error) {
         console.error("Error making move");
