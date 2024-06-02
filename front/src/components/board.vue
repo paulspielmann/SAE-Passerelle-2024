@@ -154,10 +154,8 @@ export default {
     },
 
     async makeMove(move) {
-      console.log(`Making move from ${move.source} to ${move.dest}`);
       try {
-        const newFen = await makeMove(move);
-        console.log(`Received new FEN: ${newFen}`);
+        const newFen = await makeMove(move); 
         this.loadFromFen(newFen);
         await this.updateBoard();
       } catch (error) {
@@ -165,6 +163,9 @@ export default {
       }
     },
 
+    // TODO:
+    // Change this from loading a new fen after making a move
+    // to updating the 2/3 squares modified by the previous move
     async updateBoard() {
       try {
         const moves = await getMoves();
@@ -189,45 +190,32 @@ export default {
       switch (piece) {
         case 'p':
           return 'black_pawn';
-          break;
         case 'n':
           return 'black_knight';
-          break;
         case 'b':
           return 'black_bishop';
-          break;
         case 'r':
           return 'black_rook';
-          break;
         case 'q':
           return 'black_queen';
-          break;
         case 'k':
           return 'black_king';
-          break;
 
         case 'P':
           return 'white_pawn';
-          break;
         case 'N':
           return 'white_knight';
-          break;
         case 'B':
           return 'white_bishop';
-          break;
         case 'R':
           return 'white_rook';
-          break;
         case 'Q':
           return 'white_queen';
-          break;
         case 'K':
           return 'white_king';
-          break;
 
         default:
           return '';
-          break;
       }
     },
 

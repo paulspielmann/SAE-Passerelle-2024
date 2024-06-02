@@ -94,6 +94,66 @@ public class Board {
         zobrist = new Zobrist();
     }
 
+    public Board(Board b) {
+        PlyCount = b.PlyCount;
+        FullMoveCount = b.FullMoveCount;
+        Square = new int[64];
+
+        for (int i = 0; i < 64; i++) {
+            Square[i] = b.Square[i];
+        }
+
+        KingSquareIndex = new int[2];
+        KingSquareIndex[0] = b.KingSquareIndex[0];
+        KingSquareIndex[1] = b .KingSquareIndex[1];
+
+        Pieces = new Bitboard[7];
+        Pieces[0] = new Bitboard(b.Pieces[0].board);
+        Pieces[1] = new Bitboard(b.Pieces[1].board);
+        Pieces[2] = new Bitboard(b.Pieces[2].board);
+        Pieces[3] = new Bitboard(b.Pieces[3].board);
+        Pieces[4] = new Bitboard(b.Pieces[4].board);
+        Pieces[5] = new Bitboard(b.Pieces[5].board);
+        Pieces[6] = new Bitboard(b.Pieces[6].board);
+
+        Colours = new Bitboard[2];
+        Colours[0] = new Bitboard(b.Colours[0].board);
+        Colours[1] = new Bitboard(b.Colours[1].board);
+
+        CastlingRights = b.CastlingRights;
+        FriendlyIndex = b.FriendlyIndex;
+        OpponentIndex = b.OpponentIndex;
+        MoveColour = b.MoveColour;
+        OpponentColour = b.OpponentColour;
+
+        precomputed = new Precomputed();
+        magic = new Magic();
+        zobrist = new Zobrist();
+
+        WhiteToMove = b.WhiteToMove;
+        moveHistory = new ArrayList<Move>();
+        
+        PieceCount = b.PieceCount;
+        PieceCountNoPawnsNoKings = 0;
+     
+        AllPieces = new Bitboard(b.AllPieces.board);
+        EnemyDiagSliders = new Bitboard(b.EnemyDiagSliders.board);
+        EnemyOrthoSliders = new Bitboard(b.EnemyOrthoSliders.board);
+        FriendlyDiagSliders = new Bitboard(b.FriendlyDiagSliders.board);
+        FriendlyOrthoSliders = new Bitboard(b.FriendlyOrthoSliders.board);
+        mg = new MoveGenerator(this);
+
+        CurrentGameState = new GameState(b.CurrentGameState.capturedPieceType,
+                                        b.CurrentGameState.epFile,
+                                        b.CurrentGameState.castlingRights,
+                                        b.CurrentGameState.fiftyMoveCount,
+                                        b.CurrentGameState.zobristKey);
+
+        gsHistory = new Stack<GameState>();
+        gsHistory.push(CurrentGameState);
+        moves = mg.GenerateMoves();
+    }
+
     public Board(String fen) {
         new Board().LoadFromFen(fen);
     }
