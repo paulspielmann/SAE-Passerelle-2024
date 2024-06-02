@@ -3,12 +3,14 @@ package com.sae.Chess.service;
 import com.sae.Chess.model.PlayerTimer;
 import com.sae.Chess.model.Board;
 import com.sae.Chess.model.Move;
+import com.sae.Chess.model.Engine.Engine;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
-public class GameService {
+public class SP_GameService {
+    public boolean firstMove;
     private boolean whiteToMove;
 
     private PlayerTimer whiteTimer;
@@ -16,41 +18,56 @@ public class GameService {
 
     private Board board;
     private ArrayList<Move> currentPlayerMoves;
-    
-    public GameService() {
+
+    private Engine engine;
+
+    public SP_GameService() {
         this(5, 3);
     }
     
-    public GameService(int t, int i) {
+    public SP_GameService(int t, int i) {
         this.board = new Board();
+        board.Init();
+        
         this.whiteTimer = new PlayerTimer(t, i, this::onWhiteTimeout);
         this.blackTimer = new PlayerTimer(t, i, this::onBlackTimeout);
-        
         this.whiteToMove = true;
-        this.currentPlayerMoves = new ArrayList<>();
-    }
-
-    public void Init() { Init(true); }
-
-    public void Init(boolean official) {
-        board.Init();
-
-        if (official) {
-            board.LoadStartPos();
-        }
-        currentPlayerMoves = board.moves;
+                
+        this.board.LoadStartPos();
+        this.currentPlayerMoves = board.moves;
+        
+        this.engine = new Engine(board);
+        firstMove = true;
     }
 
     public void StartGame() {
         whiteTimer.start();
     }
 
-    // Makes a move on the board and returns the FEN string of the new position
+    // Makes a move on the board, gets a move from the engine
+    // and returns the FEN string of the new position
     public String MakeMove(Move move) {
+        if (firstMove) {
+            StartGame();
+            firstMove = false;
+        }
+
         board.MakeMove(move);
         SwitchTurn();
         currentPlayerMoves = board.moves;
-        return board.toFenString();
+        
+        if (currentPlayerMoves.size() == 0) {
+            // TODO: Checkmate
+            return board.toFenString();
+        }
+
+        else {
+            Move engineMove = engine.getMove();
+            board.MakeMove(engineMove);
+            SwitchTurn();
+            currentPlayerMoves = board.moves;
+            return board.toFenString();
+        }        
     }
 
     public void SwitchTurn() {
@@ -63,6 +80,7 @@ public class GameService {
             whiteTimer.start();
         }
         whiteToMove = !whiteToMove;
+        board.WhiteToMove = whiteToMove;
     }
 
     private void onWhiteTimeout() {

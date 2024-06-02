@@ -210,60 +210,18 @@ export default {
     },
 
     async makeMove(move) {
-      console.log(`Making move from ${move.source} to ${move.dest}`);
       try {
-        const piece = this.board[move.source].piece;
-        const destPiece = this.board[move.dest].piece;
-        const newFen = await makeMove(move);
-        console.log(`Received new FEN: ${newFen}`);
+        const newFen = await makeMove(move); 
         this.loadFromFen(newFen);
         await this.updateBoard();
-        this.playedMoves.push(this.formatMove(move, piece));
-        this.fenStrings.push(newFen);
-        this.currentMoveIndex = this.fenStrings.length - 1;
-
-        if (destPiece) {
-          this.updatePoints(destPiece, this.currentPlayer);
-          this.updateCapturedPieces(destPiece, this.currentPlayer);
-        }
-
-        this.switchPlayer();
-        this.scrollToBottom();
       } catch (error) {
         console.error('Error making move:', error);
       }
     },
 
-    formatMove(move, piece) {
-      const pieceType = piece.split('_')[1];
-      const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      const sourceFile = files[move.source % 8];
-      const sourceRank = Math.floor(move.source / 8) + 1;
-      const destFile = files[move.dest % 8];
-      const destRank = Math.floor(move.dest / 8) + 1;
-      return `${pieceType} ${sourceFile}${sourceRank}-${destFile}${destRank}`;
-    },
-
-    updatePoints(piece, player) {
-      const pieceType = piece.split('_')[1];
-      const points = this.pieceValues[pieceType] || 0;
-
-      if (player === 'white') {
-        this.blackPoints += points;
-      } else {
-        this.whitePoints += points;
-      }
-    },
-
-    updateCapturedPieces(piece, player) {
-      const pieceType = piece.split('_')[1];
-      if (player === 'white') {
-        this.whiteCapturedPieces.push(pieceType);
-      } else {
-        this.blackCapturedPieces.push(pieceType);
-      }
-    },
-
+    // TODO:
+    // Change this from loading a new fen after making a move
+    // to updating the 2/3 squares modified by the previous move
     async updateBoard() {
       try {
         const moves = await getMoves();
@@ -296,6 +254,7 @@ export default {
           return 'black_queen';
         case 'k':
           return 'black_king';
+
         case 'P':
           return 'white_pawn';
         case 'N':
@@ -308,6 +267,7 @@ export default {
           return 'white_queen';
         case 'K':
           return 'white_king';
+
         default:
           return '';
       }

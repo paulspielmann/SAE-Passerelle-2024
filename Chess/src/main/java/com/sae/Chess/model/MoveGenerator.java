@@ -263,9 +263,6 @@ public class MoveGenerator {
             int dest = BitboardUtil.PopLSB(capturesA);
             int source = dest - dir * 7;
 
-            System.out.println("Generating capture " + new Move(source, dest).toString());
-            System.out.println("source pinned ? " + IsPinned(source));
-
             if (!IsPinned(source) ||
                 Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
                 moves.add(new Move(source, dest));
@@ -275,9 +272,6 @@ public class MoveGenerator {
         while (capturesB.board != 0) {
             int dest = BitboardUtil.PopLSB(capturesB);
             int source = dest - dir * 9;
-
-            System.out.println("Generating capture " + new Move(source, dest).toString());
-            System.out.println("source pinned ? " + IsPinned(source));
 
             if (!IsPinned(source) ||
                 Precomputed.PiecesAlign(source, dest, friendlyKingSquare)) {
