@@ -1,0 +1,32 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/game")
+public class GameController {
+    private final GameService gameService;
+
+    @Autowired
+    public GameController() {
+        this.gameService = new gameService();
+    }
+
+    @Autowired
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
+
+    @GetMapping("/moves")
+    public List<Move> GetCurrentPlayerMoves() {
+        return gameService.getCurrentPlayerMoves();
+    }
+
+    @GetMapping("/move")
+    public void MakeMove(Move move) {
+        gameService.MakeMove(move);
+    }
+}
