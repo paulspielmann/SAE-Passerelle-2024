@@ -5,7 +5,10 @@
     <div class="button-container">
       <router-link to="/inscription" class="button">S'inscrire</router-link>
       <router-link to="/connexion" class="button">Se connecter</router-link>
+<<<<<<< HEAD:SAE-Passerelle-2024-c04bf1dda45f35e74bcba12cf7762e9459e92acc/front/src/components/accueil.vue
       <router-link to="/jouer" class="button">Jouer</router-link>
+=======
+>>>>>>> a2ef65eedc8d3a0f81f162cf50bb44b4f69ed08e:front/src/components/accueil.vue
     </div>
   </div>
 </template>
@@ -17,8 +20,11 @@ export default {
 </script>
 
 <style scoped>
+<<<<<<< HEAD:SAE-Passerelle-2024-c04bf1dda45f35e74bcba12cf7762e9459e92acc/front/src/components/accueil.vue
 @import '../assets/stylesheet.css';
 
+=======
+>>>>>>> a2ef65eedc8d3a0f81f162cf50bb44b4f69ed08e:front/src/components/accueil.vue
 .home-container {
   display: flex;
   flex-direction: column;
@@ -37,6 +43,7 @@ export default {
   display: inline-block;
   padding: 10px 20px;
   margin: 0 10px;
+<<<<<<< HEAD:SAE-Passerelle-2024-c04bf1dda45f35e74bcba12cf7762e9459e92acc/front/src/components/accueil.vue
   background-color: #ff4081;
   color: white;
   text-decoration: none;
@@ -47,5 +54,16 @@ export default {
 .button:hover {
   background-color: #e91e63;
   transform: scale(1.05);
+=======
+  background-color: #007BFF;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+>>>>>>> a2ef65eedc8d3a0f81f162cf50bb44b4f69ed08e:front/src/components/accueil.vue
 }
 </style>
