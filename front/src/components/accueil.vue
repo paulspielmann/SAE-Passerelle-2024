@@ -5,6 +5,7 @@
     <div class="button-container">
       <router-link to="/inscription" class="button">S'inscrire</router-link>
       <router-link to="/connexion" class="button">Se connecter</router-link>
+      <router-link to="/jouer" class="button">Jouer</router-link>
     </div>
   </div>
 </template>
@@ -16,6 +17,8 @@ export default {
 </script>
 
 <style scoped>
+@import '../assets/stylesheet.css';
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -34,14 +37,15 @@ export default {
   display: inline-block;
   padding: 10px 20px;
   margin: 0 10px;
-  background-color: #007BFF;
+  background-color: #ff4081;
   color: white;
   text-decoration: none;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .button:hover {
-  background-color: #0056b3;
+  background-color: #e91e63;
+  transform: scale(1.05);
 }
 </style>

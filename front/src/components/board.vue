@@ -1,48 +1,104 @@
 <template>
-  <div class="board">
-    <div 
-    v-for="square in displayBoard" 
-    :key="square.index" 
-    :class="['square',
-      square.color,
-      {
-        highlight: square.highlight,
-        selected: square === selectedSquare
-      }]" 
-      @click="onSquareClick(square)" @dragstart="onDragStart(square)"
-      @drop="onDrop(square)" @dragover.prevent>
-      <img v-if="square.piece" :src="getPieceImage(square.piece)" :alt="square.piece" class="piece-image"
-        draggable="true" />
+  <div class="board-container">
+    <Menu />
+    <div class="main-container">
+      <div class="board-section">
+        <div :class="['timer', 'top', { active: currentPlayer === 'black' }]">
+          Temps restant: {{ formatTime(timeRemainingTop) }}
+          <div class="captured-pieces">
+            <span v-if="pointDifference > 1">+{{ pointDifference }}</span>
+          </div>
+        </div>
+        <div class="board">
+          <div 
+            v-for="square in displayBoard" 
+            :key="square.index" 
+            :class="['square', square.color, { highlight: square.highlight, selected: square === selectedSquare }]" 
+            @click="onSquareClick(square)" @dragstart="onDragStart(square)"
+            @drop="onDrop(square)" @dragover.prevent>
+            <img v-if="square.piece" :src="getPieceImage(square.piece)" :alt="square.piece" class="piece-image"
+              draggable="true" />
+          </div>
+        </div>
+        <div :class="['timer', 'bottom', { active: currentPlayer === 'white' }]">
+          Temps restant: {{ formatTime(timeRemainingBottom) }}
+          <div class="captured-pieces">
+            <span v-if="pointDifference < -1">+{{ Math.abs(pointDifference) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="moves-section">
+        <h3 class="sticky-header">Coups joués</h3>
+        <div class="navigation-buttons">
+          <button @click="previousMove">⬅️ Précédent</button>
+          <button @click="nextMove">➡️ Suivant</button>
+        </div>
+        <div class="moves-table-container" ref="movesTableContainer">
+          <table class="moves-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Blancs</th>
+                <th>Noirs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(move, index) in formattedMoves" :key="index">
+                <td>{{ index + 1 }}</td>
+                <td @click="loadMove(index * 2 + 1)">{{ move.white }}</td>
+                <td @click="loadMove(index * 2 + 2)">{{ move.black }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="moves-list">
-    <h3>Available Moves</h3>
-    <ul>
-      <li v-for="move in moves" :key="move">{{ move }}</li>
-    </ul>
-  </div>
+  
 </template>
 
 <script>
+import Menu from './menu.vue';
 import { getMoves, makeMove } from '@/api';
 
 export default {
   data() {
     return {
       whitePerspective: true,
-
       whiteToMove: true,
       castlingRights: [true, true, true, true],
       fullMoveCount: 0,
       board: this.initBoard(),
       selectedSquare: null,
-      moves: [],
+      playedMoves: [], // Store the played moves here
+      fenStrings: [], // Store FEN strings after each move
+      currentMoveIndex: 0, // Keep track of the current move index
+      currentPlayer: 'white',
+      timeRemainingTop: 600,
+      timeRemainingBottom: 600,
+      timer: null,
+      whitePoints: 0,
+      blackPoints: 0,
+      pieceValues: {
+        'pawn': 1,
+        'knight': 3,
+        'bishop': 3,
+        'rook': 5,
+        'queen': 9,
+      },
+      whiteCapturedPieces: [],
+      blackCapturedPieces: [],
     };
   },
 
   created() {
     this.loadStartPos();
     this.updateBoard();
+    this.startTimer();
+  },
+
+  beforeDestroy() {
+    clearInterval(this.timer);
   },
 
   computed: {
@@ -51,19 +107,28 @@ export default {
       for (let rank = 0; rank < 8; rank++) {
         if (this.whitePerspective) {
           res.push(...this.board.slice(rank * 8, (rank + 1) * 8).reverse());
-        }
-        else {
+        } else {
           res.push(...this.board.slice(rank * 8, (rank + 1) * 8));
         }
       }
       return this.whitePerspective ? res.reverse() : res;
+    },
+    formattedMoves() {
+      const moves = [];
+      for (let i = 0; i < this.playedMoves.length; i += 2) {
+        moves.push({
+          white: this.playedMoves[i] || '',
+          black: this.playedMoves[i + 1] || ''
+        });
+      }
+      return moves;
+    },
+    pointDifference() {
+      return this.whitePoints - this.blackPoints;
     }
   },
 
   methods: {
-    // Initializes an empty board
-    // Setting up the pieces is handled by the FEN loading function
-    // We also have a method LoadStartPos called unless told otherwise
     initBoard() {
       const board = [];
       const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -74,11 +139,9 @@ export default {
 
         board.push({
           highlight: false,
-
           index: i,
           coordinate: `${file}${rank}`,
-          color: (Math.floor(i / 8) + i) % 2 === 0 ? 'light' : 'dark',
-
+          color: (Math.floor(i / 8) + i) % 2 === 0 ? 'dark' : 'light',
           piece: null,
           whitePiece: null,
           availableMoves: [],
@@ -93,30 +156,23 @@ export default {
     },
 
     isEnnemyPiece(square) {
-      return (square.piece != null) && (this.whiteToMove ^ square.whitePiece)
+      return square.piece != null && this.whiteToMove ^ square.whitePiece;
     },
 
-    // Param square => square that is clicked on
     async onSquareClick(square) {
       if (!this.selectedSquare && this.isEnnemyPiece(square)) {
         return;
-      }
-
-      else if (this.selectedSquare === square) {
+      } else if (this.selectedSquare === square) {
         this.clearHighlights();
         this.selectedSquare = null;
-      }
-
-      else if (this.selectedSquare) {
+      } else if (this.selectedSquare) {
         const move = this.selectedSquare.availableMoves.find(m => m.dest === square.index);
         if (move) {
-          await this.makeMove(move)
+          await this.makeMove(move);
           this.selectedSquare = null;
           this.clearHighlights();
         }
-      }
-
-      else {
+      } else {
         this.selectedSquare = square;
         this.highlightAvailableMoves(square);
       }
@@ -150,18 +206,61 @@ export default {
     clearHighlights() {
       this.board.forEach(square => {
         square.highlight = false;
-      })
+      });
     },
 
     async makeMove(move) {
       console.log(`Making move from ${move.source} to ${move.dest}`);
       try {
+        const piece = this.board[move.source].piece;
+        const destPiece = this.board[move.dest].piece;
         const newFen = await makeMove(move);
         console.log(`Received new FEN: ${newFen}`);
         this.loadFromFen(newFen);
         await this.updateBoard();
+        this.playedMoves.push(this.formatMove(move, piece));
+        this.fenStrings.push(newFen);
+        this.currentMoveIndex = this.fenStrings.length - 1;
+
+        if (destPiece) {
+          this.updatePoints(destPiece, this.currentPlayer);
+          this.updateCapturedPieces(destPiece, this.currentPlayer);
+        }
+
+        this.switchPlayer();
+        this.scrollToBottom();
       } catch (error) {
         console.error('Error making move:', error);
+      }
+    },
+
+    formatMove(move, piece) {
+      const pieceType = piece.split('_')[1];
+      const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      const sourceFile = files[move.source % 8];
+      const sourceRank = Math.floor(move.source / 8) + 1;
+      const destFile = files[move.dest % 8];
+      const destRank = Math.floor(move.dest / 8) + 1;
+      return `${pieceType} ${sourceFile}${sourceRank}-${destFile}${destRank}`;
+    },
+
+    updatePoints(piece, player) {
+      const pieceType = piece.split('_')[1];
+      const points = this.pieceValues[pieceType] || 0;
+
+      if (player === 'white') {
+        this.blackPoints += points;
+      } else {
+        this.whitePoints += points;
+      }
+    },
+
+    updateCapturedPieces(piece, player) {
+      const pieceType = piece.split('_')[1];
+      if (player === 'white') {
+        this.whiteCapturedPieces.push(pieceType);
+      } else {
+        this.blackCapturedPieces.push(pieceType);
       }
     },
 
@@ -171,14 +270,12 @@ export default {
 
         this.board.forEach(square => {
           square.availableMoves = [];
-        })
+        });
 
         // Update move information for current player
         for (const move of moves) {
           this.board[move.source].availableMoves.push(move);
         }
-
-        this.moves = moves;
 
       } catch (error) {
         console.error('Error updating board:', error);
@@ -189,67 +286,49 @@ export default {
       switch (piece) {
         case 'p':
           return 'black_pawn';
-          break;
         case 'n':
           return 'black_knight';
-          break;
         case 'b':
           return 'black_bishop';
-          break;
         case 'r':
           return 'black_rook';
-          break;
         case 'q':
           return 'black_queen';
-          break;
         case 'k':
           return 'black_king';
-          break;
-
         case 'P':
           return 'white_pawn';
-          break;
         case 'N':
           return 'white_knight';
-          break;
         case 'B':
           return 'white_bishop';
-          break;
         case 'R':
           return 'white_rook';
-          break;
         case 'Q':
           return 'white_queen';
-          break;
         case 'K':
           return 'white_king';
-          break;
-
         default:
           return '';
-          break;
       }
     },
 
-    // Parse a FEN (standard notation for chess positions) string
     loadFromFen(fen) {
       this.board = this.initBoard();
 
       const fields = fen.split(' ');
 
       let file = 0;
-      let rank = 7; // FEN strings have rank 8 at the leftmost extremity
+      let rank = 7;
 
       for (const c of fields[0]) {
         if (c == '/') {
           file = 0;
           rank--;
-        }
-        else {
+        } else {
           if (c >= '0' && c <= '9') {
             file += parseInt(c);
-          }
-          else {
+          } else {
             let index = rank * 8 + file;
             this.board[index].piece = this.getPieceFromChar(c);
             this.board[index].whitePiece = /^[A-Z]*$/.test(c);
@@ -257,19 +336,74 @@ export default {
           }
         }
       }
-      this.whiteToMove = fields[1] == ("w");
+      this.whiteToMove = fields[1] == 'w';
 
       const castle = fields[2];
-      this.castlingRights[0] = castle.includes("K");
-      this.castlingRights[1] = castle.includes("Q");
-      this.castlingRights[2] = castle.includes("k");
-      this.castlingRights[3] = castle.includes("q");
+      this.castlingRights[0] = castle.includes('K');
+      this.castlingRights[1] = castle.includes('Q');
+      this.castlingRights[2] = castle.includes('k');
+      this.castlingRights[3] = castle.includes('q');
 
+      this.enPassantTarget = fields[3] === '-' ? null : fields[3];
       this.fullMoveCount = fields[5];
     },
 
     loadStartPos() {
-      this.loadFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+      const startPos = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+      this.fenStrings = [startPos];
+      this.loadFromFen(startPos);
+      this.currentMoveIndex = 0;
+    },
+
+    loadMove(index) {
+      if (index === 0) {
+        this.loadStartPos();
+      } else {
+        this.currentMoveIndex = index;
+        this.loadFromFen(this.fenStrings[index]);
+        this.updateBoard();
+      }
+    },
+
+    previousMove() {
+      if (this.currentMoveIndex > 0) {
+        this.currentMoveIndex--;
+        this.loadMove(this.currentMoveIndex);
+      }
+    },
+
+    nextMove() {
+      if (this.currentMoveIndex < this.fenStrings.length - 1) {
+        this.currentMoveIndex++;
+        this.loadMove(this.currentMoveIndex);
+      }
+    },
+
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.movesTableContainer;
+        container.scrollTop = container.scrollHeight;
+      });
+    },
+
+    startTimer() {
+      this.timer = setInterval(() => {
+        if (this.currentPlayer === 'white') {
+          this.timeRemainingBottom--;
+        } else {
+          this.timeRemainingTop--;
+        }
+      }, 1000);
+    },
+
+    formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    },
+
+    switchPlayer() {
+      this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
     },
   },
 
@@ -279,6 +413,10 @@ export default {
 };
 </script>
 
+
+
+
+
 <style scoped>
 body {
   font-family: 'Arial', sans-serif;
@@ -287,10 +425,24 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* Empêcher le défilement */
   display: flex;
   height: 100vh;
-  /* Hauteur de la page sur 100% de la vue */
+}
+
+.main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px;
+}
+
+.board-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
 }
 
 .board {
@@ -319,33 +471,101 @@ body {
   user-select: none;
 }
 
-.light {
-  background-color: #f0d9b5;
+.captured-piece-image {
+  width: 24px;
+  height: 24px;
+  margin: 0 2px;
 }
 
-.dark {
+.light {
   background-color: #b58863;
 }
 
+.dark {
+  background-color: #f0d9b5;
+}
+
 .highlight {
-  background-color: purple !important;
+  background-color: yellow !important;
 }
 
 .selected {
   background-color: rgba(0, 255, 0, 0.5) !important;
 }
 
-.moves-list {
-  margin-top: 20px;
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  text-align: center;
+  position: relative;
+}
+
+.timer.active {
+  color: #FF4500;
+}
+
+.captured-pieces {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.moves-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 20px;
+  max-height: 80vh; /* Set a maximum height for the moves section */
+  overflow: hidden;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 1;
+  margin-bottom: 10px;
+  width: 100%;
   text-align: center;
 }
 
-.moves-list ul {
-  list-style-type: none;
-  padding: 0;
+.navigation-buttons {
+  margin-bottom: 10px;
 }
 
-.moves-list li {
-  margin: 5px 0;
+.navigation-buttons button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.moves-table-container {
+  max-height: 60vh; /* Set the height for the table container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  width: 100%;
+}
+
+.moves-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.moves-table th, .moves-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.moves-table th {
+  background-color: #f2f2f2;
+}
+
+.moves-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.moves-table tr:hover {
+  background-color: #ddd;
 }
 </style>

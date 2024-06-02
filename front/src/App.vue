@@ -1,11 +1,9 @@
 <script setup>
-import Accueil from './components/accueil.vue';
-import Board from './components/board.vue'
 </script>
 
 <template>
-  <main>    
-    <Board />
+  <main>
+    <router-view></router-view> <!-- Ajouter router-view pour rendre les composants basés sur les routes -->
   </main>
 </template>
 

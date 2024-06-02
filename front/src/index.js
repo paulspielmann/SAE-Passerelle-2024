@@ -1,22 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Accueil from '../views/Home.vue';
-import OtherPage from '../views/OtherPage.vue';
+import Accueil from './components/accueil.vue';
+import Board from './components/board.vue';
+import Connexion from './components/connexion.vue';
+import Inscription from './components/inscription.vue';
+import Profil from './components/profil.vue';  // Importer le composant Profil
 
 const routes = [
   {
-    path: 'components/accueil.vue',
+    path: '/',
     name: 'Accueil',
     component: Accueil,
   },
   {
-    path: '/other',
-    name: 'OtherPage',
-    component: OtherPage,
+    path: '/jouer',
+    name: 'Board',
+    component: Board,
+  },
+  {
+    path: '/inscription',
+    name: 'Inscription',
+    component: Inscription,
+  },
+  {
+    path: '/connexion',
+    name: 'Connexion',
+    component: Connexion,
+  },
+  {
+    path: '/profil',
+    name: 'Profil',
+    component: Profil,
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory('/'), // Définir explicitement la base de l'URL
   routes,
 });
 
