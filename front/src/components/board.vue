@@ -33,6 +33,9 @@
           <button @click="previousMove">⬅️ Précédent</button>
           <button @click="nextMove">➡️ Suivant</button>
         </div>
+        <div>
+          <button class="perft" @click="paul()">Run Perft</button>
+        </div>
         <div class="moves-table-container" ref="movesTableContainer">
           <table class="moves-table">
             <thead>
@@ -59,7 +62,7 @@
 
 <script>
 import Menu from './menu.vue';
-import { getMoves, makeMove } from '@/api';
+import { getMoves, makeMove, paul } from '@/api';
 
 export default {
   data() {
@@ -129,6 +132,10 @@ export default {
   },
 
   methods: {
+    async paul() {
+      await paul();
+    },
+
     initBoard() {
       const board = [];
       const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];

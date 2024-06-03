@@ -25,3 +25,12 @@ export const makeMove = async (move) => {
         throw error;
     }
 };
+
+export const paul = async () => {
+    try {
+        const response = await axios.post(`${API_URL}/paul`);
+    } catch (error) {
+        console.error("Error: ", error);
+        throw error;
+    }
+}

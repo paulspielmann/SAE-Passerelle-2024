@@ -86,7 +86,8 @@ public class Perft {
         return nodes;
     }
 
-    public static long PerftDivide(Board b, int depth, boolean print) {
+    public static String PerftDivide(Board b, int depth, boolean print) {
+        String res = "";
         long totalNodes = 0;
         captures = 0;
         ep = 0;
@@ -158,6 +159,14 @@ public class Perft {
             totalNodes += nodes;
         }
 
+        res += "TOTAL: " + totalNodes
+             + ", captures: " + captures
+             + ", ep: " + ep
+             + ", castles: " + castles
+             + ", promotions: " + promotions
+             + ", checks: " + checks
+             + ", checkmates: " + checkmates;
+
         System.out.println("TOTAL: " + totalNodes
                            + ", captures: " + captures
                            + ", ep: " + ep
@@ -165,6 +174,6 @@ public class Perft {
                            + ", promotions: " + promotions
                            + ", checks: " + checks
                            + ", checkmates: " + checkmates);
-        return totalNodes;
+        return res;
     }
 }

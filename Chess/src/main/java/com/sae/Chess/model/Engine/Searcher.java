@@ -56,7 +56,7 @@ public class Searcher {
     }
 
     public void RunIterativeSearch() {
-        for (int depth = 1; depth <= 256; depth++) {
+        for (int depth = 1; depth <= 255; depth++) {
             hasSearchedOneMove = false;
             currentIterDepth = depth;
             Search(depth, 0, negativeInfinity, positiveInfinity);

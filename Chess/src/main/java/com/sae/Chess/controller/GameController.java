@@ -2,6 +2,8 @@ package com.sae.Chess.controller;
 
 import com.sae.Chess.service.SP_GameService;
 import com.sae.Chess.model.Move;
+import com.sae.Chess.model.Perft;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +36,10 @@ public class GameController {
     public ResponseEntity<String> MakeMove(@RequestBody Move move) {
         String fenString = gameService.MakeMove(move);
         return ResponseEntity.ok(fenString);
+    }
+
+    @PostMapping("/paul")
+    public void Paul() {
+        gameService.Paul();
     }
 }

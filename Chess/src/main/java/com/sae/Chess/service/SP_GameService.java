@@ -3,6 +3,7 @@ package com.sae.Chess.service;
 import com.sae.Chess.model.PlayerTimer;
 import com.sae.Chess.model.Board;
 import com.sae.Chess.model.Move;
+import com.sae.Chess.model.Perft;
 import com.sae.Chess.model.Engine.Engine;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,11 @@ public class SP_GameService {
         firstMove = true;
     }
 
+    public void Paul() {
+        board.LoadFromFen("8/3p4/8/2P5/2R3pk/p1K5/5P2/8 w HAha - 0 1");
+        Perft.PerftDivide(board, 5, true);
+    }
+
     public void StartGame() {
         whiteTimer.start();
     }
@@ -56,18 +62,7 @@ public class SP_GameService {
         SwitchTurn();
         currentPlayerMoves = board.moves;
         
-        if (currentPlayerMoves.size() == 0) {
-            // TODO: Checkmate
-            return board.toFenString();
-        }
-
-        else {
-            Move engineMove = engine.getMove();
-            board.MakeMove(engineMove);
-            SwitchTurn();
-            currentPlayerMoves = board.moves;
-            return board.toFenString();
-        }        
+        return board.toFenString();   
     }
 
     public void SwitchTurn() {
