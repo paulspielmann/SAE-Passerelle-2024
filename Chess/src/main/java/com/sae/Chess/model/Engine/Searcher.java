@@ -2,6 +2,8 @@ package com.sae.Chess.model.Engine;
 
 import com.sae.Chess.model.*;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.random.*;
 
 public class Searcher {
     public Board board; 
@@ -43,7 +45,10 @@ public class Searcher {
         RunIterativeSearch();
         // In the event that we didn´t find a move, return any one of them
         if (bestMoveSoFar == Move.NULL_MOVE) {
-            bestMoveSoFar = board.mg.GenerateMoves().get(0);
+            Random rd = new Random();
+            ArrayList<Move> moves = board.mg.GenerateMoves();
+            int r = rd.nextInt(0, moves.size());
+            bestMoveSoFar = moves.get(r);
         }
 
         searchCancelled = false;

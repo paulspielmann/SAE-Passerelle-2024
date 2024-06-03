@@ -2,6 +2,9 @@ package com.sae.Chess.model.Engine;
 
 import com.sae.Chess.model.*;
 
+import java.util.Random;
+import java.util.random.*;
+
 public class Evaluation {
     public final int pawnValue = 100;
     public final int knightValue = 300;
@@ -11,6 +14,8 @@ public class Evaluation {
 
     // TODO: This is a very simple, dummy eval function that needs to be worked on
     public int Evaluate(Board board) {
+        Random rd = new Random();
+
         Bitboard pawns = new Bitboard(board.Pieces[Piece.Pawn].board);
         Bitboard knight = new Bitboard(board.Pieces[Piece.Knight].board);
         Bitboard bishop = new Bitboard(board.Pieces[Piece.Bishop].board);
@@ -23,6 +28,8 @@ public class Evaluation {
         int rookScore = BitboardUtil.PopCount(rook.board) * rookValue;
         int queenScore = BitboardUtil.PopCount(queen.board) * queenValue;
 
-        return pawnScore + knightScore + bishopScore + rookScore + queenScore;
+        int r = rd.nextInt(0, 11);
+        int res = pawnScore + knightScore + bishopScore + rookScore + queenScore;
+        return res * r;
     }
 }
