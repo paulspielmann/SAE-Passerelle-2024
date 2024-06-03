@@ -247,6 +247,7 @@ public class Board {
         Square[source] = Piece.None;
 
         if (capturedType != Piece.None) {
+            System.out.println("Captured piece type: " + Piece.ToChar(capturedPiece));
             int captureSquare = dest;
 
             if (isEnPassant) {
@@ -272,7 +273,7 @@ public class Board {
         }
 
         if (movedType == Piece.King) {
-            KingSquareIndex[MoveColour / 8] = dest;
+            KingSquareIndex[FriendlyIndex] = dest;
             // Mask out side to move's castling rights
             newCastlingRights &= WhiteToMove ? 0b1100 : 0b0011;
 
@@ -286,7 +287,7 @@ public class Board {
                 Pieces[Piece.Rook].UnsetBit(rookFrom);
                 Colours[FriendlyIndex].ToggleBits(rookFrom, rookTo);
                 Square[rookFrom] = Piece.None;
-                Square[rookTo] = Piece.Rook | MoveColour;
+                Square[rookTo] = rookP;
 
                 newZobristKey ^= Zobrist.pieces[rookP][rookFrom];
                 newZobristKey ^= Zobrist.pieces[rookP][rookTo];
@@ -298,8 +299,8 @@ public class Board {
             int promotionType = move.GetPromotionPiece();
             int promotionPiece = Piece.MkPiece(promotionType, MoveColour);
 
-            Pieces[movedType].ToggleBit(dest);
-            Pieces[promotionType].ToggleBit(dest);
+            Pieces[Piece.Pawn].UnsetBit(dest);
+            Pieces[promotionType].SetBit(dest);
             Square[dest] = promotionPiece;
         }
 
@@ -353,12 +354,15 @@ public class Board {
                                            newFiftyMoveCount,
                                            newZobristKey);
 
+        System.out.println("Pushing new gamestate to stack:");
+        System.out.println("capturedType:" + capturedType);
+
         if (record) {
             PlyCount++;
             moveHistory.add(move);
-            gsHistory.push(newState);
-            CurrentGameState = newState;
         }
+        gsHistory.push(newState);
+        CurrentGameState = newState;
 
         hasCachedCheckValue = false;
         UpdateMoves();
@@ -383,26 +387,31 @@ public class Board {
         boolean promoUndo = move.IsPromotion();
         boolean captureUndo = CurrentGameState.capturedPieceType != Piece.None;
 
+        System.out.println("Undoing capture ? " + captureUndo);
+
         int movedPiece = promoUndo ? Piece.MkPiece(Piece.Pawn, MoveColour) : Square[dest];
         int movedType = Piece.GetType(movedPiece);
         int capturedType = CurrentGameState.capturedPieceType;
-
+        
         if (promoUndo) {
             int promotedPiece = Square[dest];
             int promotedType = Piece.GetType(promotedPiece);
             PieceCountNoPawnsNoKings--;
-            Pieces[promotedType].ToggleBit(dest);
-            Pieces[Piece.Pawn].ToggleBit(dest);
+            Pieces[promotedType].UnsetBit(dest);
+            Pieces[Piece.Pawn].UnsetBit(dest);
         }
-
-        Pieces[movedType].ToggleBits(source, dest);
-        Colours[FriendlyIndex].ToggleBits(source, dest);
-
+        
+        Pieces[movedType].UnsetBit(dest);
+        Pieces[movedType].SetBit(source);
+        Colours[FriendlyIndex].UnsetBit(dest);
+        Colours[FriendlyIndex].SetBit(source);
+        
         Square[dest] = Piece.None;
         Square[source] = movedPiece;
-
+        
         // Restore captured piece
         if (captureUndo) {
+            System.out.println("Captured piece type: " + Piece.ToChar(capturedType));
             int captureSquare = dest;
             int capturedPiece = Piece.MkPiece(capturedType, OpponentColour);
 
@@ -426,20 +435,21 @@ public class Board {
                 int before = kingside ? dest + 1 : dest - 2;
                 int after = kingside ? dest - 1 : dest + 1;
 
-                Pieces[Piece.Rook].ToggleBits(after, before);
+                Pieces[Piece.Rook].SetBit(before);
+                Pieces[Piece.Rook].UnsetBit(after);
                 Colours[FriendlyIndex].SetBit(before);
                 Colours[FriendlyIndex].UnsetBit(after);
-                Square[after] = Piece.None;
                 Square[before] = Piece.Rook | MoveColour;
+                Square[after] = Piece.None;
             }
         }
         AllPieces.board = Colours[WhiteIndex].board | Colours[BlackIndex].board;
         UpdateSliders();
 
+        gsHistory.pop();
+        CurrentGameState = gsHistory.peek();
+        CastlingRights = CurrentGameState.castlingRights;
         if (record) {
-            gsHistory.pop();
-            CurrentGameState = gsHistory.peek();
-            CastlingRights = CurrentGameState.castlingRights;
             PlyCount--;
         }
         hasCachedCheckValue = false;

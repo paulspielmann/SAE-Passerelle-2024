@@ -79,10 +79,6 @@ public class SP_GameService {
 
             Move move = engine.getMove(engineIsWhite);
 
-            System.out.println("engineIsWhite: " + engineIsWhite);
-            System.out.println("board.wtm: " + board.WhiteToMove);
-            System.out.println("move: " + move.toString());
-
             board.MakeMove(move);
             SwitchTurn();
             currentPlayerMoves = board.moves;

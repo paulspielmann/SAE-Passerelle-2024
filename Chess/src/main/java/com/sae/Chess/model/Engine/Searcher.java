@@ -61,7 +61,7 @@ public class Searcher {
     }
 
     public void RunIterativeSearch() {
-        for (int depth = 1; depth <= 2; depth++) {
+        for (int depth = 1; depth <= 6; depth++) {
             hasSearchedOneMove = false;
             currentIterDepth = depth;
             Search(depth, 0, negativeInfinity, positiveInfinity);
@@ -115,10 +115,10 @@ public class Searcher {
 
         for (Move move: moves) {
             board.MakeMove(move, false);
-            System.out.println("Board after makemove:\n" + board.toString());
+            System.out.println("Board after makemove " + move.toString() + ":\n" + board.toString());
             score = -Search(depth - 1, plyFromRoot + 1, -alpha, -beta);
             board.UnmakeMove(move, false);
-            System.out.println("Board after unmakemove:\n" + board.toString());
+            System.out.println("Board after unmakemove " + move.toString() + ":\n" + board.toString());
 
             if (score >= beta) {
                 return beta; // Fail-Hard cutoff might need to change to fail-soft
@@ -162,8 +162,10 @@ public class Searcher {
         // TODO: Add move ordering
         for (Move move: moves) {
             board.MakeMove(move, false);
+            System.out.println("Board after makemove " + move.toString() + ":\n" + board.toString());
             eval = -Quiescence(-beta, -alpha);
             board.UnmakeMove(move, false);
+            System.out.println("Board after unmakemove " + move.toString() + ":\n" + board.toString());
 
             if (eval >= beta) {
                 return beta;
