@@ -24,11 +24,11 @@ public class Searcher {
     public Evaluation evaluation;
 
     public Searcher(Board b) {
-        board = new Board(b);
-        evaluation = new Evaluation(board);
+        board = b;
+        evaluation = new Evaluation();
     }
 
-    public Move StartSearch() {
+    public Move StartSearch(boolean white) {
         System.out.println("Starting search for " + (isPlayingWhite ? "white" : "black"));
         bestEvalSoFar = 0;
         bestEvalThisIteration = 0;
@@ -43,7 +43,7 @@ public class Searcher {
         RunIterativeSearch();
         // In the event that we didn´t find a move, return any one of them
         if (bestMoveSoFar == Move.NULL_MOVE) {
-            bestMoveSoFar = board.mg.GenerateMoves().get(1);
+            bestMoveSoFar = board.mg.GenerateMoves().get(0);
         }
 
         searchCancelled = false;
@@ -56,7 +56,7 @@ public class Searcher {
     }
 
     public void RunIterativeSearch() {
-        for (int depth = 1; depth <= 255; depth++) {
+        for (int depth = 1; depth <= 2; depth++) {
             hasSearchedOneMove = false;
             currentIterDepth = depth;
             Search(depth, 0, negativeInfinity, positiveInfinity);
@@ -110,8 +110,11 @@ public class Searcher {
 
         for (Move move: moves) {
             board.MakeMove(move, false);
+            System.out.println("Board after makemove:\n" + board.toString());
             score = -Search(depth - 1, plyFromRoot + 1, -alpha, -beta);
             board.UnmakeMove(move, false);
+            System.out.println("Board after unmakemove:\n" + board.toString());
+
             if (score >= beta) {
                 return beta; // Fail-Hard cutoff might need to change to fail-soft
             }
@@ -120,7 +123,7 @@ public class Searcher {
                 alpha = score;
 
                 if (plyFromRoot == 0) {
-                    bestMoveThisIteration = move;
+                    bestMoveThisIteration = new Move(move.value);
                     bestEvalThisIteration = score;
                     hasSearchedOneMove = true;
                 }
@@ -139,7 +142,7 @@ public class Searcher {
             return 0;
         }
 
-        int eval = evaluation.Evaluate();
+        int eval = evaluation.Evaluate(board);
 
         if (eval >= beta) {
             return beta;
@@ -148,7 +151,9 @@ public class Searcher {
             alpha = eval;
         }
 
-        ArrayList<Move> moves = board.mg.GenerateMoves();
+        // Don't generate quiet moves in quiescence
+        ArrayList<Move> moves = board.mg.GenerateMoves(false);
+
         // TODO: Add move ordering
         for (Move move: moves) {
             board.MakeMove(move, false);

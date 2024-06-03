@@ -526,6 +526,8 @@ public class MoveGenerator {
 
         opponentAttackMap = opponentAttackMapNoPawns | pawnAttacks.board;
 
+        inCheck = board.InCheck();
+
         if (!inCheck) {
             // This should be maximum long value as the MSB is sign bit
             checkRayMask = -1L;//Long.MAX_VALUE;

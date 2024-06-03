@@ -1,0 +1,1212 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2024-06-03T19:21:45.654+02:00  INFO 8317 --- [Chess] [           main] com.sae.Chess.ChessApplication           : Starting ChessApplication using Java 17.0.10 with PID 8317 (/home/Paul/Projects/SAE_PASSERELLE_2024/Chess/build/classes/java/main started by Paul in /home/Paul/Projects/SAE_PASSERELLE_2024/Chess)
+2024-06-03T19:21:45.655+02:00  INFO 8317 --- [Chess] [           main] com.sae.Chess.ChessApplication           : No active profile set, falling back to 1 default profile: "default"
+2024-06-03T19:21:45.993+02:00  INFO 8317 --- [Chess] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-06-03T19:21:46.002+02:00  INFO 8317 --- [Chess] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-06-03T19:21:46.002+02:00  INFO 8317 --- [Chess] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2024-06-03T19:21:46.024+02:00  INFO 8317 --- [Chess] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-06-03T19:21:46.025+02:00  INFO 8317 --- [Chess] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 348 ms
+2024-06-03T19:21:46.281+02:00  INFO 8317 --- [Chess] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-06-03T19:21:46.285+02:00  INFO 8317 --- [Chess] [           main] com.sae.Chess.ChessApplication           : Started ChessApplication in 0.788 seconds (process running for 0.915)
+2024-06-03T19:21:51.626+02:00  INFO 8317 --- [Chess] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-03T19:21:51.626+02:00  INFO 8317 --- [Chess] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-06-03T19:21:51.626+02:00  INFO 8317 --- [Chess] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+Got request: getMoves()
+Got request: getMoves()
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+. . P . . . . .  | null
+P P . P P P P P  | null
+R N B Q K B N R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+p p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+. . P . . . . .  | null
+P P . P P P P P  | null
+R N B Q K B N R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+. . P . . . . .  | null
+P P . P P P P P  | null
+R N B Q K B N R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+P . P . . . . .  | null
+. P . P P P P P  | null
+R N B Q K B N R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+. . P . . . . .  | null
+P P . P P P P P  | null
+R N B Q K B N R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+p p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= 1375326261864105655
+. . P . . . . .  | null
+P P . P P P P P  | null
+R N B Q K B N R  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a6
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 0
+p . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B . K B N R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1111
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B . K B N R  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 111
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B . K B N R  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1100
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B K . B N R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1100
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B . K B N R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 1100
+. . . . . . . .  | Zobrist hash= -5515297953168968538
+. . P . . . . .  | null
+P P Q P P P P P  | null
+R N B . K B N R  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 0
+p . . . . . . .  | Castling rights= 111
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B . K B . R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 111
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B . K B . R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 111
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B . K B . R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 100
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B K . B . R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 100
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B . K B . R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 0
+. . . . . . . .  | Castling rights= 100
+. . . . . . . .  | Zobrist hash= -4838879454867352281
+. . P . . N . .  | null
+P P Q P P P P P  | null
+R N B . K B . R  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B . K B . R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B . K B . R  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B . K B . R  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B K . B . R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B . K B . R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5247290184131767272
+. . P . . N . .  | null
+P P Q P . P P P  | null
+R N B . K B . R  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . K . . R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . K . . R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 111
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . K . . R  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B K . . . R  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . K . . R  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6195799743519945961
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . K . . R  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 6028864602333903612
+. . P B . N . .  | null
+P P Q P . P P P  | null
+R N B . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R . K  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 9088339851497908041
+N . P B . N . .  | null
+P P Q P . P P P  | null
+R . B . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -4012177154681728377
+N P P B . N . .  | null
+P . Q P . P P P  | null
+R . B . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -698625109432756735
+N P P B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 3268665835218093424
+N P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p N . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. N . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. N . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. N . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . P . P . . .  | Zobrist hash= 5255437104236225947
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+. . . . . . . .  | En passant file= 5
+p . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . P . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8240313690315613328
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a7
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+. . P . . . . .  | En passant file= 5
+p . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . P . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . P . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . P . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+r p p p p p p p  | Captured Piece= .
+p . . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 1615680011105741504
+. P . B . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a7a8
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+r n b q k b n r  | 
+. . p p p p p p  | Captured Piece= P
+B p . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= P
+B P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+. p p p p p p p  | Captured Piece= P
+r P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K .  | null
+
+Board after makemove:
+. n b q k b n r  | 
+. p p p p p p p  | Captured Piece= P
+r P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+. p p p p p p p  | Captured Piece= P
+r P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K p  | null
+
+Board after unmakemove:
+r n b q k b n r  | 
+. p p p p p p p  | Captured Piece= P
+P P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -6754662323643009030
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K p  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a8a6
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+. . P p p p p p  | Captured Piece= P
+r p . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K p  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= P
+r P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K p  | null
+
+Board after makemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= P
+. P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+r B Q P . P P P  | null
+R . . . . R K p  | null
+
+Board after makemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= P
+. P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+r B Q P . P P P  | null
+R . . . . R . K  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= P
+. P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+r B Q P . P P P  | null
+R . . . . R K p  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= P
+r P . . . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= -5050720605906819778
+. P . . . N . .  | null
+P B Q P . P P P  | null
+R . . . . R K p  | null
+
+engineIsWhite: false
+board.wtm: false
+move: a6a2
+Got request: getMoves()
+
+Starting search for black
+Board after makemove:
+. n b q k b n r  | 
+. p P . p p p p  | Captured Piece= R
+. P . p . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R K p  | null
+
+Board after unmakemove:
+. n b q k b n r  | 
+. p P p p p p p  | Captured Piece= R
+. P . R . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R K p  | null
+
+Board after makemove:
+. n b . k b n r  | 
+. p q p p p p p  | Captured Piece= R
+. P . R . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R K p  | null
+
+Board after makemove:
+. n b . k b n r  | 
+. p q p p p p p  | Captured Piece= R
+. P . R . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R . K  | null
+
+Board after unmakemove:
+. n b R k b n r  | CHECK
+. p q p p p p p  | Captured Piece= R
+. P . R . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R K r  | null
+
+Board after unmakemove:
+. n b q k b n r  | CHECK
+. p R p p p p p  | Captured Piece= R
+. P . R . . . .  | En passant file= 5
+. . . . . . . .  | Castling rights= 100
+. . . . P . . .  | Zobrist hash= 8337503478533251492
+. P . . . N . .  | null
+R B Q P . P P P  | null
+. . . . . R K r  | null
+
+2024-06-03T19:22:24.715+02:00 ERROR 8317 --- [Chess] [nio-8080-exec-3] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0] with root cause
+
+java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64) ~[na:na]
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70) ~[na:na]
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266) ~[na:na]
+	at java.base/java.util.Objects.checkIndex(Objects.java:361) ~[na:na]
+	at java.base/java.util.ArrayList.get(ArrayList.java:427) ~[na:na]
+	at com.sae.Chess.model.Engine.Searcher.StartSearch(Searcher.java:46) ~[main/:na]
+	at com.sae.Chess.model.Engine.Engine.getMove(Engine.java:15) ~[main/:na]
+	at com.sae.Chess.service.SP_GameService.MakeEngineMove(SP_GameService.java:80) ~[main/:na]
+	at com.sae.Chess.service.SP_GameService.MakeMove(SP_GameService.java:69) ~[main/:na]
+	at com.sae.Chess.controller.GameController.MakeMove(GameController.java:37) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+
+Got request: getMoves()
+
+Starting search for black
+2024-06-03T19:22:30.099+02:00 ERROR 8317 --- [Chess] [nio-8080-exec-6] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0] with root cause
+
+java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64) ~[na:na]
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70) ~[na:na]
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266) ~[na:na]
+	at java.base/java.util.Objects.checkIndex(Objects.java:361) ~[na:na]
+	at java.base/java.util.ArrayList.get(ArrayList.java:427) ~[na:na]
+	at com.sae.Chess.model.Engine.Searcher.StartSearch(Searcher.java:46) ~[main/:na]
+	at com.sae.Chess.model.Engine.Engine.getMove(Engine.java:15) ~[main/:na]
+	at com.sae.Chess.service.SP_GameService.MakeEngineMove(SP_GameService.java:80) ~[main/:na]
+	at com.sae.Chess.service.SP_GameService.MakeMove(SP_GameService.java:69) ~[main/:na]
+	at com.sae.Chess.controller.GameController.MakeMove(GameController.java:37) ~[main/:na]
+	at jdk.internal.reflect.GeneratedMethodAccessor4.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+
+Got request: getMoves()
+

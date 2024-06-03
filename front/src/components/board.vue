@@ -95,6 +95,8 @@ export default {
   },
 
   created() {
+    //this.loadStartPos("8/3p4/8/2P5/2R3pk/p1K5/5P2/8 w HAha - 0 1");
+    //this.loadStartPos("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
     this.loadStartPos();
     this.updateBoard();
     this.startTimer();
@@ -163,7 +165,7 @@ export default {
     },
 
     isEnnemyPiece(square) {
-      return square.piece != null && this.whiteToMove ^ square.whitePiece;
+      return square.piece != null && (this.whiteToMove ^ square.whitePiece);
     },
 
     async onSquareClick(square) {
@@ -315,10 +317,9 @@ export default {
       this.fullMoveCount = fields[5];
     },
 
-    loadStartPos() {
-      const startPos = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-      this.fenStrings = [startPos];
-      this.loadFromFen(startPos);
+    loadStartPos(fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1') {
+      this.fenStrings = [fen];
+      this.loadFromFen(fen);
       this.currentMoveIndex = 0;
     },
 

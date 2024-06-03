@@ -21,6 +21,7 @@ public class SP_GameService {
     private ArrayList<Move> currentPlayerMoves;
 
     private Engine engine;
+    private boolean engineIsWhite;
 
     public SP_GameService() {
         this(5, 3);
@@ -34,16 +35,19 @@ public class SP_GameService {
         this.blackTimer = new PlayerTimer(t, i, this::onBlackTimeout);
         this.whiteToMove = true;
                 
+        //this.board.LoadFromFen("8/3p4/8/2P5/2R3pk/p1K5/5P2/8 w HAha - 0 1");
+        //this.board.LoadFromFen("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
         this.board.LoadStartPos();
         this.currentPlayerMoves = board.moves;
         
         this.engine = new Engine(board);
+        this.engineIsWhite = false;
         firstMove = true;
     }
 
     public void Paul() {
-        board.LoadFromFen("8/3p4/8/2P5/2R3pk/p1K5/5P2/8 w HAha - 0 1");
-        Perft.PerftDivide(board, 5, true);
+        //board.LoadFromFen("8/3p4/8/2P5/2R3pk/p1K5/5P2/8 w HAha - 0 1");
+        Perft.PerftDivide(board, 2, true);
     }
 
     public void StartGame() {
@@ -62,7 +66,28 @@ public class SP_GameService {
         SwitchTurn();
         currentPlayerMoves = board.moves;
         
-        return board.toFenString();   
+        return MakeEngineMove();   
+    }
+
+    public String MakeEngineMove() {
+        if (engineIsWhite && board.WhiteToMove
+           || !engineIsWhite && !board.WhiteToMove) {
+            if (firstMove) {
+                StartGame();
+                firstMove = false;
+            }
+
+            Move move = engine.getMove(engineIsWhite);
+
+            System.out.println("engineIsWhite: " + engineIsWhite);
+            System.out.println("board.wtm: " + board.WhiteToMove);
+            System.out.println("move: " + move.toString());
+
+            board.MakeMove(move);
+            SwitchTurn();
+            currentPlayerMoves = board.moves;
+        }
+        return board.toFenString();
     }
 
     public void SwitchTurn() {

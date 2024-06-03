@@ -9,14 +9,8 @@ public class Evaluation {
     public final int rookValue = 500;
     public final int queenValue = 900;
 
-    public Board board;
-
-    public Evaluation(Board b) {
-        board = b;
-    }
-
     // TODO: This is a very simple, dummy eval function that needs to be worked on
-    public int Evaluate() {
+    public int Evaluate(Board board) {
         Bitboard pawns = new Bitboard(board.Pieces[Piece.Pawn].board);
         Bitboard knight = new Bitboard(board.Pieces[Piece.Knight].board);
         Bitboard bishop = new Bitboard(board.Pieces[Piece.Bishop].board);
