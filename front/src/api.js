@@ -16,7 +16,7 @@ export const getMoves = async () => {
     }
 };
 
-export const makeMove = async (move) => {
+export const makeMove = async (move, singleplayer) => {
     try {
         const response = await axios.post(`${API_URL}/move`, move);
         return response.data;
