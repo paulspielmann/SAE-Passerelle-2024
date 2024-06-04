@@ -1,23 +1,24 @@
 <template>
-    <div class="container">
-      <Menu />
-      <h1>Profil de l'utilisateur</h1>
-      <!-- Ajoutez les informations de profil ici -->
-    </div>
-  </template>
-  
-  <script>
-  import Menu from './menu.vue';
-  
-  export default {
-    name: 'Profil',
-    components: {
-      Menu
+  <div class="container">
+    <h1>Bienvenue, {{ username }}</h1>
+    <button @click="startGame">Lancer une partie d'échecs</button>
+    <!-- Add the chess game component or logic here -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Profil',
+  props: ['username'],
+  methods: {
+    startGame() {
+      // Logic to start a chess game
+      console.log('Partie d\'échecs lancée par', this.username);
     }
-  };
-  </script>
-  
-  <style scoped>
-  @import '../assets/stylesheet.css'; /* Réutiliser le fichier CSS pour le style */
-  </style>
-  
+  }
+};
+</script>
+
+<style scoped>
+@import '../assets/stylesheet.css'; /* Utilisez le bon chemin vers le fichier CSS */
+</style>

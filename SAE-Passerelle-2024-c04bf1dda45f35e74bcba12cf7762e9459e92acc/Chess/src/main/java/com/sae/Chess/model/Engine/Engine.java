@@ -11,7 +11,7 @@ public class Engine {
         searcher = new Searcher(b);
     }
 
-    public Move getMove() {
-        return searcher.StartSearch();
+    public Move getMove(boolean white) {
+        return searcher.StartSearch(white);
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="board-container">
-    <Menu />
+    <Menu class="side-menu" />
     <div class="main-container">
       <div class="board-section">
         <div :class="['timer', 'top', { active: currentPlayer === 'black' }]">
@@ -33,6 +33,9 @@
           <button @click="previousMove">⬅️ Précédent</button>
           <button @click="nextMove">➡️ Suivant</button>
         </div>
+        <div>
+          <button class="perft" @click="paul()">Run Perft</button>
+        </div>
         <div class="moves-table-container" ref="movesTableContainer">
           <table class="moves-table">
             <thead>
@@ -54,14 +57,16 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
 import Menu from './menu.vue';
-import { getMoves, makeMove } from '@/api';
+import { getMoves, makeMove, paul } from '@/api';
 
 export default {
+  components: {
+    Menu,
+  },
   data() {
     return {
       whitePerspective: true,
@@ -70,9 +75,9 @@ export default {
       fullMoveCount: 0,
       board: this.initBoard(),
       selectedSquare: null,
-      playedMoves: [], // Store the played moves here
-      fenStrings: [], // Store FEN strings after each move
-      currentMoveIndex: 0, // Keep track of the current move index
+      playedMoves: [],
+      fenStrings: [],
+      currentMoveIndex: 0,
       currentPlayer: 'white',
       timeRemainingTop: 600,
       timeRemainingBottom: 600,
@@ -117,8 +122,8 @@ export default {
       const moves = [];
       for (let i = 0; i < this.playedMoves.length; i += 2) {
         moves.push({
-          white: this.playedMoves[i] || '',
-          black: this.playedMoves[i + 1] || ''
+          white: this.formatMove(this.playedMoves[i]),
+          black: this.formatMove(this.playedMoves[i + 1])
         });
       }
       return moves;
@@ -129,6 +134,10 @@ export default {
   },
 
   methods: {
+    async paul() {
+      await paul();
+    },
+
     initBoard() {
       const board = [];
       const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -156,7 +165,7 @@ export default {
     },
 
     isEnnemyPiece(square) {
-      return square.piece != null && this.whiteToMove ^ square.whitePiece;
+      return square.piece != null && (this.whiteToMove ^ square.whitePiece);
     },
 
     async onSquareClick(square) {
@@ -211,17 +220,50 @@ export default {
 
     async makeMove(move) {
       try {
-        const newFen = await makeMove(move); 
+        const newFen = await makeMove(move);
+        this.fenStrings.push(newFen);
         this.loadFromFen(newFen);
         await this.updateBoard();
+
+        if (this.isKingInCheck(this.whiteToMove ? 'K' : 'k')) {
+          console.error('Invalid move: King is in check');
+          // Unmake the move if it puts the king in check
+          await this.unmakeMove(move);
+          this.loadFromFen(this.fenStrings[this.currentMoveIndex]);
+          await this.updateBoard();
+        } else {
+          this.playedMoves.push(move);
+          this.currentMoveIndex++;
+        }
       } catch (error) {
         console.error('Error making move:', error);
       }
     },
 
-    // TODO:
-    // Change this from loading a new fen after making a move
-    // to updating the 2/3 squares modified by the previous move
+    async unmakeMove(move) {
+      try {
+        const previousFen = await unmakeMove(move); // You need to implement this function in your API
+        this.loadFromFen(previousFen);
+        await this.updateBoard();
+      } catch (error) {
+        console.error('Error unmaking move:', error);
+      }
+    },
+
+    isKingInCheck(king) {
+      const kingSquare = this.board.find(square => square.piece === king);
+      if (!kingSquare) return false;
+
+      const enemyMoves = this.board.reduce((moves, square) => {
+        if (square.piece && (this.whiteToMove ^ square.whitePiece)) {
+          return moves.concat(square.availableMoves);
+        }
+        return moves;
+      }, []);
+
+      return enemyMoves.some(move => move.dest === kingSquare.index);
+    },
+
     async updateBoard() {
       try {
         const moves = await getMoves();
@@ -230,7 +272,6 @@ export default {
           square.availableMoves = [];
         });
 
-        // Update move information for current player
         for (const move of moves) {
           this.board[move.source].availableMoves.push(move);
         }
@@ -238,6 +279,17 @@ export default {
       } catch (error) {
         console.error('Error updating board:', error);
       }
+    },
+
+    formatMove(move) {
+      if (!move) return '';
+      const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      const sourceFile = files[move.source % 8];
+      const sourceRank = Math.floor((move.source / 8)) + 1;
+      const destFile = files[move.dest % 8];
+      const destRank = Math.floor((move.dest / 8)) + 1;
+
+      return `${sourceFile}${sourceRank}-${destFile}${destRank}`;
     },
 
     getPieceFromChar(piece) {
@@ -308,17 +360,14 @@ export default {
       this.fullMoveCount = fields[5];
     },
 
-    loadStartPos() {
-      const startPos = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-      this.fenStrings = [startPos];
-      this.loadFromFen(startPos);
+    loadStartPos(fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1') {
+      this.fenStrings = [fen];
+      this.loadFromFen(fen);
       this.currentMoveIndex = 0;
     },
 
     loadMove(index) {
-      if (index === 0) {
-        this.loadStartPos();
-      } else {
+      if (index >= 0 && index < this.fenStrings.length) {
         this.currentMoveIndex = index;
         this.loadFromFen(this.fenStrings[index]);
         this.updateBoard();
@@ -373,15 +422,11 @@ export default {
 };
 </script>
 
-
-
-
-
 <style scoped>
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f7f7f7;
-  color: #333;
+  background-color: #1a1a2e;
+  color: #fff;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -402,7 +447,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 20px;
+  margin-right: 60px; /* Increased margin to create space between board and menu */
 }
 
 .board {
@@ -438,11 +483,11 @@ body {
 }
 
 .light {
-  background-color: #b58863;
+  background-color: #a9a9a9;
 }
 
 .dark {
-  background-color: #f0d9b5;
+  background-color: #696969;
 }
 
 .highlight {
@@ -482,7 +527,7 @@ body {
 .sticky-header {
   position: sticky;
   top: 0;
-  background-color: #f7f7f7;
+  background-color: white;
   z-index: 1;
   margin-bottom: 10px;
   width: 100%;
@@ -498,6 +543,20 @@ body {
   padding: 5px 10px;
   font-size: 16px;
   cursor: pointer;
+  color: black;
+  border: none;
+  border-radius: 4px;
+}
+
+.perft {
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .moves-table-container {
@@ -517,15 +576,22 @@ body {
   text-align: center;
 }
 
-.moves-table th {
-  background-color: #f2f2f2;
+.side-menu {
+ /* Use fixed positioning */
+  top: 0;
+  left: 0;
+  width: 150px; /* Increased width for better visibility */
+  height: 100%;
+  background-color: #1a1a2e;
+  display: flex;
+  flex-direction: column; /* Arrange items in a column */
+  padding: 20px 0; /* Adjusted padding for better spacing */
 }
 
-.moves-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.moves-table tr:hover {
-  background-color: #ddd;
+.side-menu a {
+  color: white;
+  text-decoration: none;
+  margin: 10px 0; /* Add margin between menu items */
+  font-size: 18px; /* Adjust font size for better readability */
 }
 </style>

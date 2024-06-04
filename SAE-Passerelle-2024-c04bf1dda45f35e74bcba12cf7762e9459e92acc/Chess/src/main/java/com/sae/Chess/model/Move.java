@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Move implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final Move NULL_MOVE = new Move(0, 0);
 
     // A square index (0 to 63) can fit in just 6 bits. This allows us to
     // encode a move in a 16 bit short : 6 bits of source and destination
